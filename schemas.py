@@ -2,6 +2,13 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
+
 class CourseBase(BaseModel):
     name: str
 
@@ -44,7 +51,7 @@ class Question(QuestionBase):
 
 class AnswerBase(BaseModel):
     description: str
-    question: int
+    question_id: int
     user_id: int
 
 class AnswerCreate(AnswerBase):
@@ -71,8 +78,8 @@ class Reaction(ReactionBase):
         orm_mode = True
 
 class UpvoteBase(BaseModel):
-    answer: int
-    user: int
+    answer_id: int
+    user_id: int
 
 class UpvoteCreate(UpvoteBase):
     pass
@@ -90,18 +97,18 @@ class UserCourseCreate(UserCourseBase):
     pass
 
 class UserCourse(UserCourseBase):
-    user: int
+    user_id: int
     course_id: int
 
     class Config:
         orm_mode = True
 
 class UserBase(BaseModel):
-    first_name: str
-    last_name: str
+    first_name: Optional[str]
+    last_name: Optional[str]
     email: str
-    year: int
-    program: str
+    year: Optional[int]
+    program: Optional[str]
 
 class UserCreate(UserBase):
     password: str

@@ -11,7 +11,7 @@ class User(Base):
     first_name = Column(String(50))
     last_name = Column(String(50))
     email = Column(String(50), unique=True, index=True, nullable=False)
-    password = Column(String(20))
+    hashed_password = Column(String(20))
 
     year = Column(Integer)
     program = Column(String(3))
@@ -28,7 +28,7 @@ class Course(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), index=True, nullable=False)
-    approved = Column(Boolean)
+    is_approved = Column(Boolean)
 
 class Category(Base):
     __tablename__ = 'category'
@@ -44,10 +44,10 @@ class Question(Base):
     title = Column(String(50), nullable=False)
     description = Column(String(1000), nullable=False)
     is_open = Column(Boolean, nullable=False)
-    category = Column(Integer, nullable=False)
-    course = Column(Integer, nullable=False)
     date = Column(DateTime, nullable=False)
 
+    category_id = Column(Integer, ForeignKey('category.id'))
+    course_id = Column(Integer, ForeignKey('course.id'))
     user_id = Column(Integer, ForeignKey('user.id'))
 
     user = relationship('User', back_populates='questions')
@@ -85,8 +85,8 @@ class Upvote(Base):
 class UserCourse(Base):
     __tablename__ = 'usercourse'
 
-    id = Column(Integer, ForeignKey('user.id'), primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True, index=True)
     course_id = Column(Integer, ForeignKey('course.id'), primary_key=True, index=True)
-    teacher = Column(Boolean)
+    is_teacher = Column(Boolean)
 
     users = relationship('User', back_populates='courses')
