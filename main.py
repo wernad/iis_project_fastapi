@@ -25,21 +25,33 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db)
     return users"""
 
-@app.get("/users/me/", response_model=schemas.User)
-async def read_users_me(current_user: schemas.User = Depends(auth.get_current_user)):
-    return current_user
+@app.post('/register', status_code=201)
+async def register(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    if crud.get_user_by_email(form_data.username):
+        raise HTTPException(status_code=400, detail='This email is taken.')
+    hashed_password = auth.get_password_hash(form_data.password)
+    
+    db.session.add(new_user)
+    db.session.commit()
+
+    return {}
 
 @app.post("/token", response_model=schemas.Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = auth.authenticate_user(db, form_data.username, form_data.password)
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = crud.get_user_by_email(db, form_data.username)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="User not found.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = auth.create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
+
+    if not verify_password(form_datapassword, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect password.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    token = auth.encode_token(user.user_id)
+    return {"access_token": token, "token_type": "bearer"}

@@ -24,14 +24,25 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-def authenticate_user(username: str, password: str, db):
-    user = get_user_by_email(db, username)
-    if not user:
-        return False
-    if not verify_password(password, user.hashed_password):
-        return False
-    return user
+def encode_token(user_id: int):
+    token_params = {
+        'exp': datetime.utcnow() + timedelta(days=0, minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
+        'iat': datetime.utcnow(),
+        'sub': user_id
+    }
 
+    return jtw.encode(token_params, SECRET_KEY, algorithm=ALGORITHM)
+
+def decode_token(token):
+    try:
+        decoded_token = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return decoded_token['sub']
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail='Expired token.')
+    except jwt.InvalidTokenError as e:
+        raise HTTPException(status_code=401, detail='Invalid token.')
+        
+"""
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
@@ -60,3 +71,4 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     if user is None:
         raise credentials_exception
     return user
+"""
