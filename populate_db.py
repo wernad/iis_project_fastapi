@@ -18,7 +18,6 @@ for user in file['users']:
         first_name = user['first_name'],
         last_name = user['last_name'],
         email = user['email'],
-        year = user['year'],
         program = user['program'],
         management_level = user['management_level']
     )

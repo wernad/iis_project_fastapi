@@ -13,7 +13,6 @@ class User(Base):
     email = Column(String(50), unique=True, index=True, nullable=False)
     hashed_password = Column(String(20))
 
-    year = Column(Integer)
     program = Column(String(3))
 
     management_level = Column(Integer)

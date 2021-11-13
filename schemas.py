@@ -107,7 +107,6 @@ class UserBase(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
     email: str
-    year: Optional[int]
     program: Optional[str]
 
 class UserCreate(UserBase):
