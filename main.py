@@ -25,16 +25,13 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db)
     return users"""
 
-@app.post('/register', status_code=201)
+"""@app.post('/register', status_code=201)
 async def register(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     if crud.get_user_by_email(form_data.username):
         raise HTTPException(status_code=400, detail='This email is taken.')
     hashed_password = auth.get_password_hash(form_data.password)
-    
-    db.session.add(new_user)
-    db.session.commit()
-
-    return {}
+    form_data.password = hashed_password
+    return crud.create_user(db, form_data)"""
 
 @app.post("/token", response_model=schemas.Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
