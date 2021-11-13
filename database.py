@@ -4,7 +4,11 @@ from sqlalchemy.orm import sessionmaker
 
 SQLALCHEMY_DATABASE_URL = 'mysql://admin:iis7319@localhost/fituska'
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    connect_args={
+        'charset': 'utf8'
+})
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
