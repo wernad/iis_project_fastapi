@@ -21,7 +21,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET, POST"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -32,7 +32,7 @@ def get_db():
     finally:
         db.close()
 
-@app.post('/register', status_code=201) #OAuth2PasswordRequestForm = Depends()
+@app.post('/register', status_code=201) 
 async def register(form_data: schemas.UserCreate, db: Session = Depends(get_db)):
     user = crud.get_user_by_email(db, form_data.email)
     if user:

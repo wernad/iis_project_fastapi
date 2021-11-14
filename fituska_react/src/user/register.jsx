@@ -4,9 +4,6 @@ import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
 
 const MyTextInput = ({ label, ...props }) => {
-  // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
-  // which we can spread on <input>. We can use field meta to show an error
-  // message if the field is invalid and it has been touched (i.e. visited)
   const [field, meta] = useField(props);
   return (
     <>
@@ -32,35 +29,36 @@ const MySelect = ({ label, ...props }) => {
   );
 };
 
-// And now we can use these
+const validationSchema = Yup.object({
+  firstName: Yup.string().required('Required'),
+  lastName: Yup.string().required('Required'),
+  email: Yup.string().email('Invalid email address').required('Required'),
+  password: Yup.string().min(6, 'Must be at least 6 characters long').required('Required'),
+});
+
 const Registration = () => {
   return (
       <Formik
         initialValues={{ firstName: '', lastName: '', email: '', password: '', program: ''}}
-      validationSchema={Yup.object({
-        firstName: Yup.string()
-          .max(15, 'Must be 15 characters or less')
-          .required('Required'),
-        lastName: Yup.string()
-          .max(20, 'Must be 20 characters or less')
-          .required('Required'),
-        email: Yup.string().email('Invalid email address').required('Required').required('Required'),
-        password: Yup.string().min(6, 'Must be at least 6 characters long').required('Required'),
-      })}
-      onSubmit={(values, { setSubmitting }) => {
-        setTimeout(() => {
-          setSubmitting(true);
-          //alert(JSON.stringify(values, null, 2));
-          axios
-          .post('https://localhost:8000/register', values)
-          .then(response => {
-            console.log(response)
-          })
-          .catch(error => {
-            console.log(error)
-          })
-          setSubmitting(false);
-        }, 400);
+      validationSchema={validationSchema}
+      onSubmit={async (values) => {
+        const requestOptions = {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            first_name: values.firstName,
+            last_name: values.lastName, 
+            email: values.email,
+            password: values.password,
+            program: values.program,
+          }),
+        };
+        console.log(requestOptions)
+        const response = await fetch("http://localhost:8000/register", requestOptions);
+        const data = await response.json();
+        console.log("error: " + JSON.stringify(data));
       }}
     >
         <Form>
@@ -77,7 +75,7 @@ const Registration = () => {
           />
 
           <MyTextInput
-            label="Email Address"
+            label="Email Address:"
             name="email"
             type="email"
           />
