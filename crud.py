@@ -16,14 +16,14 @@ def create_user(db: Session, user: schemas.UserCreate):
     new_user = models.User(
         first_name= user.first_name,
         last_name= user.last_name,
-        email= user.username,
-        hashed_password= user.hashed_password,
-        year= user.year,
+        email= user.email,
+        password= user.password,
         program= user.program
     )
+    db.add(new_user)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(new_user)
+    return new_user
 
 #Category
 def get_category_by_id(db: Session, category_id: int):

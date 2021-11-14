@@ -110,7 +110,7 @@ class UserBase(BaseModel):
     program: Optional[str]
 
 class UserCreate(UserBase):
-    hashed_password: str
+    password: str
 
 class User(UserBase):
     user_id: int
