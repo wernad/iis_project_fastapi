@@ -17,8 +17,7 @@ def create_user(db: Session, user: schemas.UserCreate):
         first_name= user.first_name,
         last_name= user.last_name,
         email= user.email,
-        password= user.password,
-        program= user.program
+        password= user.password
     )
     db.add(new_user)
     db.commit()
@@ -39,50 +38,50 @@ def get_categories(db: Session, skip: int = 0, limit: int = 100):
 def get_course_by_id(db: Session, course_id):
     return db.query(models.Course).filter(models.Course.id == course_id).first()
 
-def get_courses(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Course).offset(skip).limit(limit).all()
+def get_approved_courses(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Course).filter(models.Course.is_approved == True).all()
 
 #Question
 def get_question_by_id(db: Session, question_id: int):
     return db.query(models.Question).filter(models.Question.id == question_id).first()
 
 def get_questions_by_user(db: Session, user_id: int):
-    return db.query(models.Upvote).filter(models.Question.user == user_id).all()
+    return db.query(models.Question).filter(models.Question.user_id == user_id).all()
 
 def get_questions_by_category(db: Session, category_id: int):
-    return db.query(models.Upvote).filter(models.Question.category == category_id).all()
+    return db.query(models.Question).filter(models.Question.categor_idy == category_id).all()
 
 def get_questions_by_course(db: Session, course_id: int):
-    return db.query(models.Upvote).filter(models.Question.course == course_id).all()
+    return db.query(models.Question).filter(models.Question.course_id == course_id).all()
 
 def get_questions(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Question).offset(skip).limit(limit).all()
 
 #Answer
 def get_answer_by_id(db: Session, answer_id: int):
-    return db.query(models.Question).filter(models.Answer.id == answer_id).first()
+    return db.query(models.Answer).filter(models.Answer.id == answer_id).first()
 
 def get_answers_by_user(db: Session, user_id: int):
-    return db.query(models.Upvote).filter(models.Answer.user == user_id).all()
+    return db.query(models.Answer).filter(models.Answer.user == user_id).all()
 
 def get_answers_by_question(db: Session, question_id: int):
-    return db.query(models.Upvote).filter(models.Answer.question == question_id).all()
+    return db.query(models.Answer).filter(models.Answer.question == question_id).all()
 
 def get_answers(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Question).offset(skip).limit(limit).all()
+    return db.query(models.Answer).offset(skip).limit(limit).all()
 
 #Reaction
 def get_reaction_by_id(db: Session, reaction_id: int):
-    return db.query(models.Question).filter(models.Reaction.id == reaction_id).first()
+    return db.query(models.Reaction).filter(models.Reaction.id == reaction_id).first()
 
 def get_reactions_by_user(db: Session, user_id: int):
-    return db.query(models.Upvote).filter(models.Reaction.user == user_id).all()
+    return db.query(models.Reaction).filter(models.Reaction.user == user_id).all()
 
 def get_reactions_by_answer(db: Session, answer_id: int):
-    return db.query(models.Upvote).filter(models.Reaction.answer == answer_id).all()
+    return db.query(models.Reaction).filter(models.Reaction.answer == answer_id).all()
 
 def get_reactions(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Question).offset(skip).limit(limit).all()
+    return db.query(models.Reaction).offset(skip).limit(limit).all()
 
 #Upvote
 def get_upvotes_by_user(db: Session, user_id: int):

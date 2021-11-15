@@ -1,194 +1,216 @@
 {
-    "users": [{
-            "first_name": "Ján",
-            "last_name": "Kučera",
-            "email": "jk@gmail.com",
-            "password": "iis123",
-            "program": "BIT",
-            "management_level": null
-        },
-        {
-            "first_name": "Jozef",
-            "last_name": "Holý",
-            "email": "jh@gmail.com",
-            "password": "iis123",
-            "program": "BIT",
-            "management_level": 1
-        },
-        {
-            "first_name": "Jakub",
-            "last_name": "Mráz",
-            "email": "jmmm@gmail.com",
-            "password": "iis123",
-            "program": "BIT",
-            "management_level": null
-        },
-        {
-            "first_name": "Erik",
-            "last_name": "Keseg",
-            "email": "EK123@gmail.com",
-            "password": "iis123",
-            "program": null,
-            "management_level": null
-        },
-        {
-            "first_name": "Ladislav",
-            "last_name": "Vanko",
-            "email": "pvl645@gmail.com",
-            "password": "iis123",
-            "program": "DIT",
-            "management_level": 0
-        }
-    ],
+  "users": [
+    {
+      "first_name": "Ján",
+      "last_name": "Kučera",
+      "email": "jk@gmail.com",
+      "password": "iis123",
+      "management_level": null
+    },
+    {
+      "first_name": "Jozef",
+      "last_name": "Holý",
+      "email": "jh@gmail.com",
+      "password": "iis123",
+      "management_level": 1
+    },
+    {
+      "first_name": "Jakub",
+      "last_name": "Mráz",
+      "email": "jmmm@gmail.com",
+      "password": "iis123",
+      "management_level": null
+    },
+    {
+      "first_name": "Erik",
+      "last_name": "Keseg",
+      "email": "EK123@gmail.com",
+      "password": "iis123",
+      "management_level": null
+    },
+    {
+      "first_name": "Ladislav",
+      "last_name": "Vanko",
+      "email": "ldv645@gmail.com",
+      "password": "iis123",
+      "management_level": 0
+    }
+  ],
 
-    "courses": [{
-            "name": "Mikroprocesorové a vestavěné systémy",
-            "is_approved": true
-        },
-        {
-            "name": "Informační systémy",
-            "is_approved": false
-        },
-        {
-            "name": "Základy programování",
-            "is_approved": true
-        }
-    ],
+  "courses": [
+    {
+      "name": "Mikroprocesorové a vestavěné systémy",
+      "is_approved": true
+    },
+    {
+      "name": "Informační systémy",
+      "is_approved": false
+    },
+    {
+      "name": "Základy programování",
+      "is_approved": true
+    }
+  ],
 
-    "categories": [{
-            "name": "Cvičenie č.1",
-            "course_id": 3
-        },
-        {
-            "name": "Polsemestrálna skúška",
-            "course_id": 1
-        },
-        {
-            "name": "Cvičene č.2",
-            "course_id": 3
-        }
-    ],
-    "questions": [{
-            "title": "Opakovanie z cvičenia č.1",
-            "description": "Napíšte kód v jazyku C ktorý uloží do znakovej premennej x hodnotu \"A\" ak v premennej \"condition\" je párne číslo, inak zapíše \"B\".",
-            "is_open": true,
-            "date": "2021-11-01 15:00:11",
-            "category_id": 1,
-            "course_id": 3,
-            "user_id": 4
-        },
-        {
-            "title": "Opakovanie z cvičenia č.2",
-            "description": "Akú hodnotu vypíše nasledovný kód ?\\nint x = 5;\\nint *px = &x;\\npx++;\\nprintf(\\\"Value:  %d\n\\\", *px );",
-            "is_open": false,
-            "date": "2021-11-09 10:40:07",
-            "category_id": 3,
-            "course_id": 3,
-            "user_id": 4
-        },
-        {
-            "title": "Otazka č.1, skupina B",
-            "description": "Prečo musel pri stlačení tlačidla byť povolený filter?",
-            "is_open": true,
-            "date": "2021-10-29 13:46:21",
-            "category_id": 2,
-            "course_id": 1,
-            "user_id": 1
-        }
-    ],
-    "answers": [{
-            "description": "if(condition % 2 == 0) {\\nx = \"A\";} \\nelse\\n{x = \"B\"}",
-            "date": "2021-11-01 15:30:01",
-            "question_id": 1,
-            "user_id": 1
-        },
-        {
-            "description": "x = condition % 2 == 0 ? \"A\" : \"B\"",
-            "date": "2021-11-01 15:32:10",
-            "question_id": 1,
-            "user_id": 2
-        },
-        {
-            "description": "Nevieme určiť nakoľko hodnota pointera bola zmenená a už neukazuje na premennú x.",
-            "date": "2021-11-10 09:00:11",
-            "question_id": 2,
-            "user_id": 2
-        }
-    ],
-    "reactions": [{
-            "description": "Ak by sme si tu adresu vypisali predtym, tak by sme vedeli kam sa to posunie po inkrementacii, nie ?",
-            "date": "2021-11-11 18:00:41",
-            "answer_id": 3,
-            "user_id": 3
-        },
-        {
-            "description": "Áno, ale v danom kóde vypisujeme už upravenú hodnotu.",
-            "date": "2021-11-11 18:04:41",
-            "answer_id": 3,
-            "user_id": 2
-        }
-    ],
-    "upvotes": [{
-            "answer_id": 2,
-            "user_id": 1
-        },
-        {
-            "answer_id": 2,
-            "user_id": 3
-        },
-        {
-            "answer_id": 1,
-            "user_id": 4
-        },
-        {
-            "answer_id": 3,
-            "user_id": 1
-        }
-    ],
-    "userCourses": [{
-            "user_id": 1,
-            "course_id": 1,
-            "is_teacher": false
-        },
-        {
-            "user_id": 1,
-            "course_id": 3,
-            "is_teacher": false
-        },
-        {
-            "user_id": 2,
-            "course_id": 1,
-            "is_teacher": false
-        },
-        {
-            "user_id": 2,
-            "course_id": 3,
-            "is_teacher": false
-        },
-        {
-            "user_id": 3,
-            "course_id": 1,
-            "is_teacher": false
-        },
-        {
-            "user_id": 3,
-            "course_id": 3,
-            "is_teacher": false
-        },
-        {
-            "user_id": 4,
-            "course_id": 1,
-            "is_teacher": true
-        },
-        {
-            "user_id": 5,
-            "course_id": 1,
-            "is_teacher": true
-        },
-        {
-            "user_id": 4,
-            "course_id": 2,
-            "is_teacher": true
-        }
-    ]
+  "categories": [
+    {
+      "name": "Cvičenie č.1",
+      "course_id": 3
+    },
+    {
+      "name": "Polsemestrálna skúška",
+      "course_id": 1
+    },
+    {
+      "name": "Cvičene č.2",
+      "course_id": 3
+    }
+  ],
+  "questions": [
+    {
+      "title": "Opakovanie z cvičenia č.1",
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
+      "is_open": true,
+      "date": "2021-11-01 15:00:11",
+      "category_id": 1,
+      "course_id": 3,
+      "user_id": 4
+    },
+    {
+      "title": "Opakovanie z cvičenia č.2",
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+      "is_open": false,
+      "date": "2021-11-09 10:40:07",
+      "category_id": 3,
+      "course_id": 3,
+      "user_id": 4
+    },
+    {
+      "title": "Otazka č.1, skupina B",
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "is_open": true,
+      "date": "2021-10-29 13:46:21",
+      "category_id": 2,
+      "course_id": 1,
+      "user_id": 1
+    }
+  ],
+  "answers": [
+    {
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "date": "2021-11-01 15:30:01",
+      "is_correct": false,
+      "question_id": 1,
+      "user_id": 1
+    },
+    {
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "date": "2021-11-01 15:32:10",
+      "is_correct": false,
+      "question_id": 1,
+      "user_id": 2
+    },
+    {
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "date": "2021-11-10 09:00:11",
+      "is_correct": true,
+      "question_id": 2,
+      "user_id": 2
+    },
+    {
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "date": "2021-11-10 09:00:11",
+      "is_correct": false,
+      "question_id": 2,
+      "user_id": 3
+    }
+  ],
+  "reactions": [
+    {
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "date": "2021-11-11 18:00:41",
+      "answer_id": 3,
+      "user_id": 3
+    },
+    {
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "date": "2021-11-11 18:04:41",
+      "answer_id": 3,
+      "user_id": 2
+    }
+  ],
+  "upvotes": [
+    {
+      "answer_id": 2,
+      "user_id": 1
+    },
+    {
+      "answer_id": 2,
+      "user_id": 3
+    },
+    {
+      "answer_id": 1,
+      "user_id": 4
+    },
+    {
+      "answer_id": 3,
+      "user_id": 1
+    }
+  ],
+  "userCourses": [
+    {
+      "user_id": 1,
+      "course_id": 1,
+      "is_teacher": false,
+      "is_approved": true
+    },
+    {
+      "user_id": 1,
+      "course_id": 3,
+      "is_teacher": false,
+      "is_approved": true
+    },
+    {
+      "user_id": 2,
+      "course_id": 1,
+      "is_teacher": false,
+      "is_approved": true
+    },
+    {
+      "user_id": 2,
+      "course_id": 3,
+      "is_teacher": false,
+      "is_approved": true
+    },
+    {
+      "user_id": 3,
+      "course_id": 1,
+      "is_teacher": false,
+      "is_approved": true
+    },
+    {
+      "user_id": 3,
+      "course_id": 3,
+      "is_teacher": false,
+      "is_approved": false
+    },
+    {
+      "user_id": 4,
+      "course_id": 1,
+      "is_teacher": true,
+      "is_approved": true
+    },
+    {
+      "user_id": 5,
+      "course_id": 1,
+      "is_teacher": true,
+      "is_approved": true
+    },
+    {
+      "user_id": 4,
+      "course_id": 2,
+      "is_teacher": true,
+      "is_approved": true
+    }
+  ]
 }

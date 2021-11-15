@@ -1,6 +1,8 @@
+from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel
+from sqlalchemy.sql.sqltypes import DateTime
 
 class Token(BaseModel):
     access_token: str
@@ -9,13 +11,78 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: Optional[str] = None
 
-class CourseBase(BaseModel):
-    name: str
+class ReactionBase(BaseModel):
+    description: str
+    date: datetime
 
-class CourseCreate(CourseBase):
+class ReactionCreate(ReactionBase):
     pass
 
-class Course(CourseBase):
+class Reaction(ReactionBase):
+    answer_id: int
+    user_id: int
+
+    class Config:
+        orm_mode = True
+
+class UpvoteBase(BaseModel):
+    answer_id: int
+    user_id: int
+
+class UpvoteCreate(UpvoteBase):
+    pass
+
+class Upvote(UpvoteBase):
+    
+    class Config:
+        orm_mode = True
+
+class AnswerBase(BaseModel):
+    description: str
+    is_correct: bool
+    date: datetime
+
+class AnswerCreate(AnswerBase):
+    pass
+
+class Answer(AnswerBase): 
+    answer_id: int
+    question_id: int
+    user_id: int
+    reactions: List[Reaction] = []
+    upvotes: List[Upvote] = []
+
+    class Config:
+        orm_mode = True
+
+class QuestionBase(BaseModel):
+    title: str
+    description: str
+    is_open: bool
+    date: datetime
+
+class QuestionCreate(QuestionBase):
+    pass
+
+class Question(QuestionBase):
+    question_id: int
+    user_id: int
+    category_id: int
+    course_id: int
+    answers: List[Answer] = []
+
+    class Config:
+        orm_mode = True
+
+class UserCourseBase(BaseModel):
+    is_teacher: bool
+    is_approved: bool
+
+class UserCourseCreate(UserCourseBase):
+    pass
+
+class UserCourse(UserCourseBase):
+    user_id: int
     course_id: int
 
     class Config:
@@ -30,75 +97,22 @@ class CategoryCreate(CategoryBase):
 class Category(CategoryBase):
     category_id: int
     course_id: int
+    questions: List[Question] = []
 
     class Config:
         orm_mode = True
 
-class QuestionBase(BaseModel):
-    title: str
-    description: str
-    is_open: bool
+class CourseBase(BaseModel):
+    name: str
+    is_approved: bool
 
-class QuestionCreate(QuestionBase):
+class CourseCreate(CourseBase):
     pass
 
-class Question(QuestionBase):
-    question_id: int
-    user_id: int
-
-    class Config:
-        orm_mode = True
-
-class AnswerBase(BaseModel):
-    description: str
-    question_id: int
-    user_id: int
-
-class AnswerCreate(AnswerBase):
-    pass
-
-class Answer(AnswerBase): 
-    answer_id: int
-
-    class Config:
-        orm_mode = True
-
-class ReactionBase(BaseModel):
-    description: int
-    answer_id: int
-
-class ReactionCreate(ReactionBase):
-    pass
-
-class Reaction(ReactionBase):
-    reaction_id: int 
-    user_id: int
-
-    class Config:
-        orm_mode = True
-
-class UpvoteBase(BaseModel):
-    answer_id: int
-    user_id: int
-
-class UpvoteCreate(UpvoteBase):
-    pass
-
-class Upvote(UpvoteBase):
-    upvote_id: int 
-    
-    class Config:
-        orm_mode = True
-
-class UserCourseBase(BaseModel):
-    approved: bool
-
-class UserCourseCreate(UserCourseBase):
-    pass
-
-class UserCourse(UserCourseBase):
-    user_id: int
+class Course(CourseBase):
     course_id: int
+    users: List[UserCourse] = []
+    categories: List[Category] = []
 
     class Config:
         orm_mode = True
@@ -107,7 +121,6 @@ class UserBase(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
     email: str
-    program: Optional[str]
 
 class UserCreate(UserBase):
     password: str
@@ -119,7 +132,8 @@ class User(UserBase):
     questions : List[Question] = []
     answers : List[Answer] = []
     reactions : List[Reaction] = []
-    courses : List[Course] = []
+    courses : List[UserCourse] = []
+    upvotes : List[Upvote] = []
 
     class Config:
         orm_mode = True

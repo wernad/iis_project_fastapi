@@ -15,7 +15,12 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-origins = ["http://localhost:3000"]
+origins = [
+    "http://localhost:3000",
+    "http://localhost:3000/courses",
+    "http://localhost:3000/course", 
+    "http://localhost:3000/question"
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -59,3 +64,14 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
 
     token = auth.encode_token(user.id)
     return {"access_token": token, "token_type": "bearer"}
+
+@app.get('/courses')
+async def get_courses(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    courses = crud.get_approved_courses(db, skip=skip, limit=limit)
+    return courses
+
+@app.get('/course/{course_id}')
+async def get_course_detail(course_id, db: Session = Depends(get_db)):
+    course = crud.get_course_by_id(db, course_id)
+    questions = crud.get_questions_by_course(db, course_id)
+    return {"name": course.name, "questions": questions}

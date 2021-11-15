@@ -14,22 +14,12 @@ models.Base.metadata.create_all(bind=engine)
 with open("db_data.json",'r',encoding = 'utf8') as file:
     file = json.load(file)
 
-"""file_utf8 = {}
-for k, table in file.items():
-    new_table = []
-    for row in table:
-        new_table.append({k: str(v).encode('utf-8') if isinstance(v, str) else v for k,v in row.items()})
-    file_utf8[k] = new_table
-
-file = file_utf8"""
-
 for user in file['users']:
     new_user = models.User(
         first_name = user['first_name'],
         last_name = user['last_name'],
         email = user['email'],
         password= get_password_hash(user['password']),
-        program = user['program'],
         management_level = user['management_level']
     )
     db.add(new_user)
@@ -72,6 +62,7 @@ for answer in file['answers']:
     new_answer = models.Answer(
         description = answer['description'],
         date = answer['date'],
+        is_correct = answer['is_correct'],
         question_id = answer['question_id'],
         user_id = answer['user_id'],
     )
@@ -103,7 +94,8 @@ for userCourse in file['userCourses']:
     new_userCourse = models.UserCourse(
         user_id = userCourse['user_id'],
         course_id = userCourse['course_id'],
-        is_teacher = userCourse['is_teacher']
+        is_teacher = userCourse['is_teacher'],
+        is_approved = userCourse['is_approved']
     )
     db.add(new_userCourse)
 
