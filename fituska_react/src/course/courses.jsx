@@ -7,27 +7,30 @@ const Courses = () => {
   const [courses, setCourses] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
-  useEffect(async () => {
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+  useEffect(() => {
+    async function fetchCourses() {
+      const requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
 
-    try {
-      const response = await fetch(
-        "http://localhost:8000/courses",
-        requestOptions
-      );
+      try {
+        const response = await fetch(
+          "http://localhost:8000/courses",
+          requestOptions
+        );
 
-      const data = await response.json();
+        const data = await response.json();
 
-      setCourses(data);
-      setLoaded(true);
-    } catch (e) {
-      console.log("error:" + e);
+        setCourses(data);
+        setLoaded(true);
+      } catch (e) {
+        console.log("error:" + e);
+      }
     }
+    fetchCourses();
   }, []);
 
   return (

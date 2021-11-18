@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import Navigation from "../forum/navbar";
+import QuestionEntry from "../question/questionEntry";
 
 const CourseDetail = () => {
   const [name, setName] = useState();
@@ -9,39 +10,62 @@ const CourseDetail = () => {
   const [loaded, setLoaded] = useState(false);
   const { id } = useParams();
 
-  useEffect(async () => {
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    console.log("http://localhost:8000/course/" + id);
-    try {
-      const response = await fetch(
-        "http://localhost:8000/course/" + id,
-        requestOptions
-      );
+  useEffect(() => {
+    async function fetchCourseData() {
+      const requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
 
-      const data = await response.json();
-      setName(data.name);
-      setQuestions(data.questions);
-      console.log("test: " + JSON.stringify(data));
-      setLoaded(true);
-    } catch (e) {
-      console.log("error:" + e);
+      try {
+        const response = await fetch(
+          "http://localhost:8000/course/" + id,
+          requestOptions
+        );
+
+        const data = await response.json();
+
+        setName(data.name);
+        setQuestions(data.questions);
+        setLoaded(true);
+      } catch (e) {
+        console.log("error:" + e);
+      }
     }
-  }, []);
+    fetchCourseData();
+  }, [id]);
 
   return (
     <>
       <Navigation />
-      <div className="text-center">
-        <h1></h1>
-      </div>
-      <div className="container">
-        <p>{id}</p>
-      </div>
+      {loaded && name ? (
+        <>
+          <div className="text-center">
+            <h1>{name}</h1>
+          </div>
+          <div className="container">
+            {questions &&
+              questions.map((question, key) => {
+                return (
+                  <div key={key}>
+                    <QuestionEntry
+                      key={key}
+                      name={question.title}
+                      category={question.category}
+                      is_open={question.is_open}
+                      date={question.date}
+                      id={question.id}
+                    />
+                  </div>
+                );
+              })}
+          </div>
+        </>
+      ) : (
+        <p className="d-flex justify-content-center m-3">Loading...</p>
+      )}
     </>
   );
 };

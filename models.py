@@ -13,7 +13,7 @@ class User(Base):
     email = Column(String(50), unique=True, index=True, nullable=False)
     password = Column(String(100))
 
-    management_level = Column(Integer)
+    management_level = Column(Integer, nullable=True)
 
     questions = relationship('Question', back_populates='user')
     answers = relationship('Answer', back_populates='user')
@@ -28,6 +28,7 @@ class Course(Base):
     name = Column(String(50), index=True, nullable=False)
     is_approved = Column(Boolean)
 
+    questions = relationship('Question', back_populates='course', order_by='Question.date')
     categories = relationship('Category', back_populates='course')
     users = relationship('UserCourse', back_populates='course')
 
@@ -54,9 +55,10 @@ class Question(Base):
     course_id = Column(Integer, ForeignKey('course.id'))
     user_id = Column(Integer, ForeignKey('user.id'))
 
+    course = relationship('Course', back_populates='questions')
     user = relationship('User', back_populates='questions')
     category = relationship('Category', back_populates='questions')
-    answers = relationship('Answer', back_populates='question')
+    answers = relationship('Answer', back_populates='question', order_by='Answer.date')
 
 class Answer(Base):
     __tablename__ = 'answer'
@@ -71,7 +73,7 @@ class Answer(Base):
 
     user = relationship('User', back_populates='answers')
     question = relationship('Question', back_populates='answers')
-    reactions = relationship('Reaction', back_populates='answer')
+    reactions = relationship('Reaction', back_populates='answer', order_by='Reaction.date')
     upvotes = relationship('Upvote', back_populates='answer')
 
 class Reaction(Base):

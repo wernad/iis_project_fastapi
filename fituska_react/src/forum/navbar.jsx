@@ -4,8 +4,8 @@ import { Navbar, Container, Nav } from "react-bootstrap";
 class Navigation extends Component {
   render() {
     return (
-      <div className="d-flex justify-content-center m-3">
-        <Navbar expand="lg" navbar-brand="true">
+      <div className=" d-flex justify-content-center m-3">
+        <Navbar expand="lg" className="border-bottom" navbar-brand="true">
           <Container>
             <Navbar.Brand href="#home">Fituška 2</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />

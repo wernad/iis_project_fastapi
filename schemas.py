@@ -1,8 +1,10 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, ForwardRef
 
 from pydantic import BaseModel
 from sqlalchemy.sql.sqltypes import DateTime
+
+User = ForwardRef('User')
 
 class Token(BaseModel):
     access_token: str
@@ -21,6 +23,7 @@ class ReactionCreate(ReactionBase):
 class Reaction(ReactionBase):
     answer_id: int
     user_id: int
+    user: Optional[User] = None
 
     class Config:
         orm_mode = True
@@ -46,11 +49,12 @@ class AnswerCreate(AnswerBase):
     pass
 
 class Answer(AnswerBase): 
-    answer_id: int
+    id: int
     question_id: int
     user_id: int
     reactions: List[Reaction] = []
     upvotes: List[Upvote] = []
+    user: Optional[User] = None
 
     class Config:
         orm_mode = True
@@ -65,11 +69,12 @@ class QuestionCreate(QuestionBase):
     pass
 
 class Question(QuestionBase):
-    question_id: int
+    id: int
     user_id: int
     category_id: int
     course_id: int
     answers: List[Answer] = []
+    user: Optional[User] = None
 
     class Config:
         orm_mode = True
@@ -95,7 +100,14 @@ class CategoryCreate(CategoryBase):
     pass
 
 class Category(CategoryBase):
-    category_id: int
+    id: int
+    course_id: int
+
+    class Config:
+        orm_mode = True
+
+class CategoryDetail(CategoryBase):
+    id: int
     course_id: int
     questions: List[Question] = []
 
@@ -110,9 +122,16 @@ class CourseCreate(CourseBase):
     pass
 
 class Course(CourseBase):
-    course_id: int
+    id: int
+
+    class Config:
+        orm_mode = True
+
+class CourseDetail(CourseBase):
+    id: int
     users: List[UserCourse] = []
     categories: List[Category] = []
+    questions: List[Question] = []
 
     class Config:
         orm_mode = True
@@ -126,9 +145,13 @@ class UserCreate(UserBase):
     password: str
 
 class User(UserBase):
-    user_id: int
-    management_level: int
+    id: int
+    
+    class Config:
+        orm_mode = True
 
+class UserDetail(User):
+    management_level: Optional[int]
     questions : List[Question] = []
     answers : List[Answer] = []
     reactions : List[Reaction] = []
@@ -137,3 +160,7 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+Reaction.update_forward_refs()
+Answer.update_forward_refs()
+Question.update_forward_refs()

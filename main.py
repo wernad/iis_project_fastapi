@@ -70,8 +70,25 @@ async def get_courses(skip: int = 0, limit: int = 100, db: Session = Depends(get
     courses = crud.get_approved_courses(db, skip=skip, limit=limit)
     return courses
 
-@app.get('/course/{course_id}')
+@app.get('/course/{course_id}', response_model=schemas.CourseDetail)
 async def get_course_detail(course_id, db: Session = Depends(get_db)):
     course = crud.get_course_by_id(db, course_id)
-    questions = crud.get_questions_by_course(db, course_id)
-    return {"name": course.name, "questions": questions}
+    if not course.is_approved:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Course not found.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return course
+
+@app.get('/question/{question_id}', response_model=schemas.Question)
+async def get_question_detail(question_id, db: Session = Depends(get_db)):
+    question = crud.get_question_by_id(db, question_id)
+    if not question:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Question not found.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return question
