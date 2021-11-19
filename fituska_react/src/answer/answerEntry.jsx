@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-import ReactionEntry from "../answer/reactionEntry";
+import ReactionEntry from "../reaction/reactionEntry";
 
 const AnswerEntry = ({
   id,
@@ -11,20 +11,26 @@ const AnswerEntry = ({
   is_correct,
   reactions,
   upvotes,
+  question_status,
 }) => {
   const [showReactions, setShowReactions] = useState(false);
   const [upvotesCount, setUpvotesCount] = useState(0);
   const formatedDate = new Date(date).toLocaleString();
   const name = user.first_name + " " + user.last_name;
-  if (reactions) {
-    console.log(reactions);
+
+  const upvoteIcon = "▲";
+
+  function upvoteAnswer() {
+    console.log("clicked");
   }
   return (
     <>
       <div
         className={`card my-2 ${is_correct ? "border-success" : "border-info"}`}
       >
-        <div className={`${is_correct ? "bg-success" : "bg-info"}`}>
+        <div
+          className={`d-flex flex-row ${is_correct ? "bg-success" : "bg-info"}`}
+        >
           <div className="mx-1">
             Od:
             <Link className="text-dark mx-1" to={"../users/" + user.id}>
@@ -33,6 +39,12 @@ const AnswerEntry = ({
             <br />
             Dátum: {formatedDate}
           </div>
+          <div className="h2 flex-fill text-end m-1">{upvotes.length}</div>
+          {
+            <div role="button" className="h2 m-1">
+              <a onClick={() => upvoteAnswer()}>{upvoteIcon}</a>
+            </div>
+          }
         </div>
         <div>{description}</div>
       </div>

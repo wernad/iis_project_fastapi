@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Navigation from "../forum/navbar";
 import CourseEntry from "./courseEntry";
 
-const Courses = () => {
+const Courses = ({ loggedUser }) => {
   const [courses, setCourses] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
@@ -35,7 +35,7 @@ const Courses = () => {
 
   return (
     <>
-      <Navigation />
+      <Navigation loggedUser={loggedUser} />
       <div className="text-center">
         <h1>Kurzy</h1>
       </div>

@@ -2,16 +2,18 @@ from datetime import datetime
 from typing import List, Optional, ForwardRef
 
 from pydantic import BaseModel
+from sqlalchemy.orm.session import COMMITTED
 from sqlalchemy.sql.sqltypes import DateTime
 
 User = ForwardRef('User')
+Course = ForwardRef('Course')
 
 class Token(BaseModel):
     access_token: str
     token_type: str
 
-class TokenData(BaseModel):
-    username: Optional[str] = None
+class TokenOwner(BaseModel):
+    id: Optional[int]
 
 class ReactionBase(BaseModel):
     description: str
@@ -36,7 +38,7 @@ class UpvoteCreate(UpvoteBase):
     pass
 
 class Upvote(UpvoteBase):
-    
+
     class Config:
         orm_mode = True
 
@@ -89,6 +91,7 @@ class UserCourseCreate(UserCourseBase):
 class UserCourse(UserCourseBase):
     user_id: int
     course_id: int
+    course: Optional[Course] = None
 
     class Config:
         orm_mode = True
@@ -164,3 +167,4 @@ class UserDetail(User):
 Reaction.update_forward_refs()
 Answer.update_forward_refs()
 Question.update_forward_refs()
+UserCourse.update_forward_refs()

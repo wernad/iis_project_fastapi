@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import Navigation from "../forum/navbar";
 import QuestionEntry from "../question/questionEntry";
 
-const CourseDetail = () => {
+const CourseDetail = ({ loggedUser }) => {
   const [name, setName] = useState();
   const [questions, setQuestions] = useState([]);
   const [loaded, setLoaded] = useState(false);
@@ -39,7 +39,7 @@ const CourseDetail = () => {
 
   return (
     <>
-      <Navigation />
+      <Navigation loggedUser={loggedUser} />
       {loaded && name ? (
         <>
           <div className="text-center">

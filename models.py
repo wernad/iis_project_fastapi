@@ -101,8 +101,8 @@ class Upvote(Base):
 class UserCourse(Base):
     __tablename__ = 'usercourse'
 
-    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True, index=True)
-    course_id = Column(Integer, ForeignKey('course.id'), primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    course_id = Column(Integer, ForeignKey('course.id'), primary_key=True)
     is_teacher = Column(Boolean)
     is_approved = Column(Boolean)
 

@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const CourseEntry = ({ id, name }) => {
-  const path = `./${id}`;
+  const path = `./course/${id}`;
 
   if (!name) return <div />;
   return (

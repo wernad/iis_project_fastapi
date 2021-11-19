@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
+import { Navigate } from "react-router-dom";
 
 import Navigation from "../forum/navbar";
 
@@ -32,10 +33,14 @@ const validationSchema = Yup.object({
     .required("Required"),
 });
 
-const Register = () => {
+const Register = ({ loggedUser }) => {
+  if (loggedUser) {
+    return <Navigate to="/" />;
+  }
+
   return (
     <>
-      <Navigation />
+      <Navigation loggedUser={loggedUser} />
       <div className="d-flex justify-content-center m-3">
         <h3>Registrácia</h3>
       </div>
@@ -88,17 +93,13 @@ const Register = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <MyTextInput label="Email:" name="email" type="email" />
+                  <MyTextInput label="Email:" name="email" type="text" />
                 </div>
                 <div className="form-group">
                   <MyTextInput label="Heslo:" name="password" type="password" />
                 </div>
                 <div className="form-group">
-                  <button
-                    className="btn btn-primary my-2"
-                    type="submit"
-                    //disabled={isSubmitting}
-                  >
+                  <button className="btn btn-primary my-2" type="submit">
                     Registrovať
                   </button>
                 </div>

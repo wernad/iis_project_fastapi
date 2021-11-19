@@ -3,16 +3,12 @@ from typing import Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
+import jwt
 from passlib.context import CryptContext
-
-from schemas import TokenData
-
-from crud import get_user_by_email
 
 SECRET_KEY = 'b1e92f25a496ddc6b80cc48d3b300d51df89cd8266f3ceba483f70d8bf7e970c'
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -36,9 +32,10 @@ def encode_token(user_id: int):
 def decode_token(token):
     try:
         decoded_token = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return decoded_token['sub']
+        return {"id": decoded_token['sub']}
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail='Expired token.')
+            raise HTTPException(status_code=401, detail='Signature has expired')
     except jwt.InvalidTokenError as e:
-        raise HTTPException(status_code=401, detail='Invalid token.')
+        raise HTTPException(status_code=401, detail='Invalid token')
+
     

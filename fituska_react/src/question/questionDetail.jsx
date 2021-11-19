@@ -4,7 +4,7 @@ import { useParams, Link } from "react-router-dom";
 import Navigation from "../forum/navbar";
 import AnswerEntry from "../answer/answerEntry";
 
-const QuestionDetail = () => {
+const QuestionDetail = ({ loggedUser }) => {
   const [author, setAuthor] = useState({});
   const [question, setQuestion] = useState({});
   const [answers, setAnswers] = useState([]);
@@ -41,10 +41,10 @@ const QuestionDetail = () => {
   }, [id]);
   return (
     <>
-      <Navigation />
+      <Navigation loggedUser={loggedUser} />
       {loaded && question ? (
         <>
-          <div className=" col-md-8 my-1 mx-auto p-1">
+          <div className=" col-md-8 my-1 mx-auto p-1 ">
             <div className="card border-info">
               <div className="bg-info">
                 <h2 className="mx-1">Titulok: {question.title}</h2>
@@ -75,6 +75,7 @@ const QuestionDetail = () => {
                         reactions={answer.reactions}
                         upvotes={answer.upvotes}
                         user={answer.user}
+                        question_status={question.is_ipen}
                       />
                     </div>
                   );

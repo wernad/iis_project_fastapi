@@ -95,10 +95,13 @@ def get_upvotes(db: Session, skip: int = 0, limit: int = 100):
 
 #UserCourse
 def get_usercourse_by_user(db: Session, user_id: int):
-    return db.query(models.Upvote).filter(models.UserCourse.user_id == user_id).all()
+    return db.query(models.UserCourse).filter(models.UserCourse.user_id == user_id).all()
 
 def get_usercourse_by_course(db: Session, course_id: int):
-    return db.query(models.Upvote).filter(models.UserCourse.course_id == course_id).all()
+    return db.query(models.UserCourse).filter(models.UserCourse.course_id == course_id).all()
+
+def get_usercourse_by_course_not_approved_only(db: Session, course_id: int):
+    return db.query(models.UserCourse).filter(models.UserCourse.course_id == course_id, models.UserCourse.is_approved == False).all()
 
 def get_upvotes(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Upvote).offset(skip).limit(limit).all()
+    return db.query(models.UserCourse).offset(skip).limit(limit).all()
