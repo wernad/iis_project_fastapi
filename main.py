@@ -95,9 +95,9 @@ async def get_course_detail(course_id, db: Session = Depends(get_db)):
         )
     return course
 
-@app.get("/mycourses/{user_id}", response_model=schemas.UserCourse)
-async def get_my_courses(user_id, db: Session = Depends(get_course_detail)):
-    my_courses = crud.get_usercourse_by_user(db, user_id)
+@app.get("/mycourses/{user_id}", response_model=schemas.UserMyCourses)
+async def get_my_courses(user_id, db: Session = Depends(get_db)):
+    my_courses = crud.get_user_by_id(db, user_id)
 
     return my_courses
 

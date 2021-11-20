@@ -126,7 +126,8 @@ class CourseCreate(CourseBase):
 
 class Course(CourseBase):
     id: int
-
+    categories: List[Category] = []
+    
     class Config:
         orm_mode = True
 
@@ -149,21 +150,16 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
+
+    class Config:
+        orm_mode = True
+
+class UserMyCourses(BaseModel):
+    courses: List[UserCourse] = []
     
     class Config:
         orm_mode = True
-
-class UserDetail(User):
-    management_level: Optional[int]
-    questions : List[Question] = []
-    answers : List[Answer] = []
-    reactions : List[Reaction] = []
-    courses : List[UserCourse] = []
-    upvotes : List[Upvote] = []
-
-    class Config:
-        orm_mode = True
-
+        
 Reaction.update_forward_refs()
 Answer.update_forward_refs()
 Question.update_forward_refs()

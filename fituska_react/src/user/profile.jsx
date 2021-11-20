@@ -4,7 +4,7 @@ import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 
 import Navigation from "../forum/navbar";
-import MyCourses from "../management/mycourses";
+import MyCourses from "../management/myCourses";
 
 const MyTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
@@ -53,7 +53,7 @@ const Profile = ({ loggedUser }) => {
         );
 
         const data = await response.json();
-        console.log(data);
+
         setUser(data);
         setLoaded(true);
       } catch (e) {
@@ -66,9 +66,10 @@ const Profile = ({ loggedUser }) => {
   if (loaded && !loggedUser) {
     return <Navigate to="/" />;
   }
-  console.log("profile " + loggedUser);
+
   return (
     <>
+      {!loggedUser && <Navigate to="/login" />}
       {loaded && loggedUser ? (
         <>
           <Navigation loggedUser={loggedUser} />

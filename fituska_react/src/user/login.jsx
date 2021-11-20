@@ -54,7 +54,7 @@ const Login = ({ loggedUser }) => {
 
   return (
     <>
-      {loggedUser && <Navigate to="/" />}
+      {loggedUser && <Navigate to="/profile" />}
       <Navigation loggedUser={loggedUser} />
       <div className="d-flex justify-content-center m-3">
         <h3>Prihlásenie</h3>
@@ -92,15 +92,20 @@ const Login = ({ loggedUser }) => {
             {() => (
               <Form className="needs-validation">
                 <div className="form-group">
-                  <MyTextInput label="Email:" name="email" type="text" />
+                  <MyTextInput label="Email:*" name="email" type="text" />
                 </div>
                 <div className="form-group">
-                  <MyTextInput label="Heslo:" name="password" type="password" />
+                  <MyTextInput
+                    label="Heslo:*"
+                    name="password"
+                    type="password"
+                  />
                 </div>
                 <div className="form-group">
                   <button className="btn btn-primary my-2" type="submit">
                     Prihlásiť sa
                   </button>
+                  <div>*Povinné údaje.</div>
                 </div>
               </Form>
             )}

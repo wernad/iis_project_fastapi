@@ -40,6 +40,7 @@ const Register = ({ loggedUser }) => {
 
   return (
     <>
+      {loggedUser && <Navigate to="/profile" />}
       <Navigation loggedUser={loggedUser} />
       <div className="d-flex justify-content-center m-3">
         <h3>Registrácia</h3>
@@ -83,25 +84,30 @@ const Register = ({ loggedUser }) => {
             {(isSubmitting) => (
               <Form className="needs-validation">
                 <div className="form-group">
-                  <MyTextInput label="Meno:" name="firstName" type="text" />
+                  <MyTextInput label="Meno:*" name="firstName" type="text" />
                 </div>
                 <div className="form-group">
                   <MyTextInput
-                    label="Priezvisko:"
+                    label="Priezvisko:*"
                     name="lastName"
                     type="text"
                   />
                 </div>
                 <div className="form-group">
-                  <MyTextInput label="Email:" name="email" type="text" />
+                  <MyTextInput label="Email:*" name="email" type="text" />
                 </div>
                 <div className="form-group">
-                  <MyTextInput label="Heslo:" name="password" type="password" />
+                  <MyTextInput
+                    label="Heslo:*"
+                    name="password"
+                    type="password"
+                  />
                 </div>
                 <div className="form-group">
                   <button className="btn btn-primary my-2" type="submit">
                     Registrovať
                   </button>
+                  <div>*Povinné údaje.</div>
                 </div>
               </Form>
             )}

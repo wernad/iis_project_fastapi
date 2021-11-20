@@ -10,9 +10,7 @@ const ReactionEntry = ({ id, date, description, user }) => {
         <div className="bg-secondary">
           <div className="mx-1">
             Od:
-            <Link className="text-dark mx-1" to={"../users/" + id}>
-              {name}
-            </Link>
+            <span className="mx-1">{name}</span>
             <br />
             Dátum: {formatedDate}
           </div>

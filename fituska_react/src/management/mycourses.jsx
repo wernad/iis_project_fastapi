@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+import MyCoursesDetail from "./myCoursesDetail";
+
 const MyCourses = ({ loggedUser }) => {
   const [myCourses, setMyCourses] = useState([]);
   const [loaded, setLoaded] = useState(false);
@@ -20,19 +22,38 @@ const MyCourses = ({ loggedUser }) => {
         );
 
         const data = await response.json();
-        console.log(data);
-        setMyCourses(data);
+        console.log("myc " + JSON.stringify(data));
+        setMyCourses(data.courses);
         setLoaded(true);
       } catch (e) {
         console.log("error:" + e);
       }
-
-      getMyCourses();
     }
+    getMyCourses();
   }, []);
   return (
     <>
-      <div></div>
+      {loaded && (
+        <div className="">
+          <div className="container">
+            {myCourses &&
+              myCourses.map((myCourse, key) => {
+                return (
+                  <div key={key}>
+                    <MyCoursesDetail
+                      is_teacher={myCourse.is_teacher}
+                      user_approved={myCourse.is_approved}
+                      course_approved={myCourse.course.is_approved}
+                      course_id={myCourse.course_id}
+                      categories={myCourse.course.categories}
+                      course_name={myCourse.course.name}
+                    />
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      )}
     </>
   );
 };
