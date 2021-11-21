@@ -41,7 +41,9 @@ const AnswerEntry = ({
           <div className="h2 flex-fill text-end m-1">{upvotes.length}</div>
           {(loggedUser || question_open) && (
             <div role="button" className="h2 m-1">
-              <a onClick={() => upvoteAnswer()}>{upvoteIcon}</a>
+              <a className="btn btn-secondary" onClick={() => upvoteAnswer()}>
+                {upvoteIcon}
+              </a>
             </div>
           )}
         </div>

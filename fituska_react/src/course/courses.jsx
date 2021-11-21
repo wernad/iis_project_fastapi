@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import Navigation from "../forum/navbar";
 import CourseEntry from "./courseEntry";
 
 const Courses = ({ loggedUser }) => {
@@ -35,7 +34,6 @@ const Courses = ({ loggedUser }) => {
 
   return (
     <>
-      <Navigation loggedUser={loggedUser} />
       <div className="text-center">
         <h1>Kurzy</h1>
       </div>

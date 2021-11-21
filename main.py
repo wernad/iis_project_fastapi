@@ -74,6 +74,17 @@ async def check_if_logged_in(tokenData: schemas.Token, db: Session = Depends(get
     user_id = auth.decode_token(tokenData.access_token)
     return  user_id
 
+@app.post("/addanswer/")
+async def create_answer(form_data: schemas.AnswerCreate, db: Session = Depends(get_db)):
+    answer = crud.get_answer_by_question_and_user(db, form_data.question_id, form_data.user_id)
+    if answer:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You have already answered this question.",
+        )
+
+    return crud.create_answer(db, form_data)
+
 @app.get("/courseswithupvotes")
 async def get_courses_with_upvotes_only(db: Session = Depends(get_db)):
     courses= crud.get_courses_with_upvotes_only(db)
@@ -119,7 +130,6 @@ async def get_my_courses(user_id, db: Session = Depends(get_db)):
     my_courses = crud.get_user_by_id(db, user_id)
 
     return my_courses
-
 
 @app.get("/question/{question_id}", response_model=schemas.Question)
 async def get_question_detail(question_id, db: Session = Depends(get_db)):

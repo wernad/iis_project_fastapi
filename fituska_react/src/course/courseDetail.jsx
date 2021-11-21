@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import Navigation from "../forum/navbar";
 import QuestionEntry from "../question/questionEntry";
 
 const CourseDetail = ({ loggedUser }) => {
@@ -39,7 +38,6 @@ const CourseDetail = ({ loggedUser }) => {
 
   return (
     <>
-      <Navigation loggedUser={loggedUser} />
       {loaded && name ? (
         <>
           <div className="text-center">

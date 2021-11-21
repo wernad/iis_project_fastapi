@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
-import Navigation from "../forum/navbar";
 import AnswerEntry from "../answer/answerEntry";
+import AddAnswerEntry from "../answer/addAnswerEntry";
 
 const QuestionDetail = ({ loggedUser }) => {
   const [author, setAuthor] = useState({});
@@ -36,12 +36,41 @@ const QuestionDetail = ({ loggedUser }) => {
         console.log("error:" + e);
       }
     }
-
     fetchQuestionData();
   }, [id]);
+
+  const addAnswer = async (e) => {
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        description: new FormData(e.target).get("answerText"),
+        date: new Date().toISOString(),
+        question_id: question.id,
+        user_id: loggedUser,
+      }),
+    };
+
+    try {
+      const response = await fetch(
+        "http://localhost:8000/addanswer",
+        requestOptions
+      );
+
+      const data = await response.json();
+
+      let new_answers = answers;
+      new_answers.append(data);
+      setAnswers(new_answers);
+    } catch (e) {
+      console.log("error:" + e);
+    }
+  };
+
   return (
     <>
-      <Navigation loggedUser={loggedUser} />
       {loaded && question ? (
         <>
           <div className=" col-md-8 my-1 mx-auto p-1 ">
@@ -50,7 +79,10 @@ const QuestionDetail = ({ loggedUser }) => {
                 <h2 className="mx-1">Titulok: {question.title}</h2>
                 <div className=" mx-1">
                   Od:
-                  <Link className="text-dark mx-1" to={"../users/" + author.id}>
+                  <Link
+                    className="text-dark mx-1"
+                    to={"../users/" + question.user_id}
+                  >
                     {author.first_name + " " + author.last_name}
                   </Link>
                   <br />
@@ -81,6 +113,17 @@ const QuestionDetail = ({ loggedUser }) => {
                     </div>
                   );
                 })}
+
+              <AddAnswerEntry
+                loggedUser={loggedUser}
+                question_id={id}
+                question_open={question.is_open}
+                question_author={question.user_id}
+                answers_authors={question.answers.map((answer, key) => {
+                  return answer.user_id;
+                })}
+                addAnswer={addAnswer}
+              />
             </div>
           </div>
         </>

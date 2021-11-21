@@ -36,23 +36,25 @@ const TopTotal = ({}) => {
           <div className="container">
             <div className="card col-md-5 my-1 mx-auto p-1 ">
               <table className="table">
-                <tr>
-                  <th>Meno</th>
-                  <th>Kontakt</th>
-                  <th>Body</th>
-                </tr>
-                {topUsers &&
-                  topUsers.map((user, key) => {
-                    return (
-                      <tr key={key}>
-                        <td className="">
-                          {user.first_name + " " + user.last_name}
-                        </td>
-                        <td className="">{user.email}</td>
-                        <td className="">{user.votes}</td>
-                      </tr>
-                    );
-                  })}
+                <tbody>
+                  <tr>
+                    <th>Meno</th>
+                    <th>Kontakt</th>
+                    <th>Body</th>
+                  </tr>
+                  {topUsers &&
+                    topUsers.map((user, key) => {
+                      return (
+                        <tr key={key}>
+                          <td className="">
+                            {user.first_name + " " + user.last_name}
+                          </td>
+                          <td className="">{user.email}</td>
+                          <td className="">{user.votes}</td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
               </table>
             </div>
           </div>

@@ -3,9 +3,11 @@ from typing import List, Optional, ForwardRef
 
 from pydantic import BaseModel
 from sqlalchemy.orm.session import COMMITTED
+from sqlalchemy.sql.expression import false
 from sqlalchemy.sql.sqltypes import DateTime
 
 User = ForwardRef('User')
+UserBase = ForwardRef('UserBase')
 Course = ForwardRef('Course')
 
 class Token(BaseModel):
@@ -25,7 +27,7 @@ class ReactionCreate(ReactionBase):
 class Reaction(ReactionBase):
     answer_id: int
     user_id: int
-    user: Optional[User] = None
+    user: Optional[UserBase] = None
 
     class Config:
         orm_mode = True
@@ -44,19 +46,19 @@ class Upvote(UpvoteBase):
 
 class AnswerBase(BaseModel):
     description: str
-    is_correct: bool
-    date: datetime
+    date: datetime = datetime.now()
+    question_id: int
+    user_id: int
 
 class AnswerCreate(AnswerBase):
     pass
 
 class Answer(AnswerBase): 
-    id: int
-    question_id: int
-    user_id: int
+    id: int    
+    is_correct: bool = False
     reactions: List[Reaction] = []
     upvotes: List[Upvote] = []
-    user: Optional[User] = None
+    user: Optional[UserBase] = None
 
     class Config:
         orm_mode = True
@@ -76,7 +78,7 @@ class Question(QuestionBase):
     category_id: int
     course_id: int
     answers: List[Answer] = []
-    user: Optional[User] = None
+    user: Optional[UserBase] = None
 
     class Config:
         orm_mode = True
@@ -145,6 +147,9 @@ class UserBase(BaseModel):
     last_name: Optional[str]
     email: str
 
+    class Config:
+        orm_mode = True
+
 class UserCreate(UserBase):
     password: str
 
@@ -159,7 +164,7 @@ class UserMyCourses(BaseModel):
     
     class Config:
         orm_mode = True
-        
+
 Reaction.update_forward_refs()
 Answer.update_forward_refs()
 Question.update_forward_refs()

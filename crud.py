@@ -1,5 +1,6 @@
 from sqlalchemy import func, desc
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.elements import False_
 
 import models, schemas
 
@@ -98,8 +99,24 @@ def get_answers_by_user(db: Session, user_id: int):
 def get_answers_by_question(db: Session, question_id: int):
     return db.query(models.Answer).filter(models.Answer.question_id == question_id).all()
 
+def get_answer_by_question_and_user(db: Session, question_id: int, user_id: int):
+    return db.query(models.Answer).filter(models.Answer.question_id == question_id).filter(models.Answer.user_id == user_id).first()
+
 def get_answers(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Answer).offset(skip).limit(limit).all()
+
+def create_answer(db: Session, answer: schemas.AnswerCreate):
+    new_answer = models.Answer(
+        description= answer.description,
+        user_id= answer.user_id,
+        date= answer.date,
+        question_id=answer.question_id,
+        is_correct=False
+    )
+    db.add(new_answer)
+    db.commit()
+    db.refresh(new_answer)
+    return new_answer 
 
 #Reaction
 def get_reaction_by_id(db: Session, reaction_id: int):

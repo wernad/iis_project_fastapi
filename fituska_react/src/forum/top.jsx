@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import Navigation from "../forum/navbar";
 import TopTotal from "./topUsersTotal";
 import TopCourseTotal from "./topUsersCourse";
 
@@ -56,19 +55,21 @@ const Top = ({ loggedUser }) => {
     <>
       {loaded && (
         <>
-          <Navigation loggedUser={loggedUser} />
           <div className="text-center">
             <h1>Rebríček užívateľov</h1>
             <select
+              defaultValue=""
               className="mx-auto h2 text-center"
               onChange={(value) => changeHandler(value)}
             >
-              <option selected value="">
-                Celkové
-              </option>
+              <option value="">Celkové</option>
               {courses &&
                 courses.map((course, key) => {
-                  return <option value={course.id}>{course.name}</option>;
+                  return (
+                    <option key={key} value={course.id}>
+                      {course.name}
+                    </option>
+                  );
                 })}
             </select>
           </div>

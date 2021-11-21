@@ -4,8 +4,6 @@ import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
 
-import Navigation from "../forum/navbar";
-
 const MyTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
   return (
@@ -32,30 +30,28 @@ const ValidationSchema = Yup.object({
 
 const Login = ({ loggedUser }) => {
   const navigate = useNavigate();
-  let location = useLocation();
 
   function loginHandler(tokenData) {
-    const from = location.state?.from?.pathname || "/";
-
     const cookies = new Cookies();
 
     cookies.set("access_token", tokenData.access_token, {
       httpOnly: false,
       maxAge: 1800,
+      path: "/",
     });
 
     cookies.set("token_type", tokenData.token_type, {
       httpOnly: false,
       maxAge: 1800,
+      path: "/",
     });
 
-    navigate(from, { replace: true });
+    navigate(navigate(-1), { replace: true });
   }
 
   return (
     <>
       {loggedUser && <Navigate to="/profile" />}
-      <Navigation loggedUser={loggedUser} />
       <div className="d-flex justify-content-center m-3">
         <h3>Prihlásenie</h3>
       </div>

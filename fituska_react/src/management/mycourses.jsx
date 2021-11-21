@@ -17,7 +17,7 @@ const MyCourses = ({ loggedUser }) => {
 
       try {
         const response = await fetch(
-          "http://localhost:8000/mycourses/" + loggedUser.id,
+          "http://localhost:8000/mycourses/" + loggedUser,
           requestOptions
         );
 

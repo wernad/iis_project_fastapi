@@ -3,8 +3,6 @@ import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 import { Navigate } from "react-router-dom";
 
-import Navigation from "../forum/navbar";
-
 const MyTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
   return (
@@ -35,13 +33,12 @@ const validationSchema = Yup.object({
 
 const Register = ({ loggedUser }) => {
   if (loggedUser) {
-    return <Navigate to="/" />;
+    return <Navigate to="/profile" />;
   }
 
   return (
     <>
       {loggedUser && <Navigate to="/profile" />}
-      <Navigation loggedUser={loggedUser} />
       <div className="d-flex justify-content-center m-3">
         <h3>Registrácia</h3>
       </div>

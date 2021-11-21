@@ -5,8 +5,8 @@ import Cookies from "universal-cookie";
 const Navigation = ({ loggedUser }) => {
   function logOut() {
     const cookies = new Cookies();
-    cookies.remove("access_token");
-    cookies.remove("token_type");
+    cookies.remove("access_token", { path: "/" });
+    cookies.remove("token_type", { path: "/" });
   }
   return (
     <div className=" d-flex justify-content-center m-3">

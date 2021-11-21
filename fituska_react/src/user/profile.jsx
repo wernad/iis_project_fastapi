@@ -3,7 +3,6 @@ import { useParams, Navigate } from "react-router-dom";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 
-import Navigation from "../forum/navbar";
 import MyCourses from "../management/myCourses";
 
 const MyTextInput = ({ label, ...props }) => {
@@ -48,12 +47,12 @@ const Profile = ({ loggedUser }) => {
 
       try {
         const response = await fetch(
-          "http://localhost:8000/profile/" + loggedUser.id,
+          "http://localhost:8000/profile/" + loggedUser,
           requestOptions
         );
 
         const data = await response.json();
-
+        console.log("here " + data);
         setUser(data);
         setLoaded(true);
       } catch (e) {
@@ -72,7 +71,6 @@ const Profile = ({ loggedUser }) => {
       {!loggedUser && <Navigate to="/login" />}
       {loaded && loggedUser ? (
         <>
-          <Navigation loggedUser={loggedUser} />
           <div className="col-md-5 my-1 mx-auto p-1">
             <h2 className="mx-1">Profil</h2>
             <div className="card d-flex flex-row">

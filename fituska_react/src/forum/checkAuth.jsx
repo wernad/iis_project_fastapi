@@ -9,6 +9,7 @@ import Courses from "../course/courses";
 import CourseDetail from "../course/courseDetail";
 import QuestionDetail from "../question/questionDetail";
 import Profile from "../user/profile";
+import Navigation from "./navbar";
 
 const CheckAuth = () => {
   const [loggedUser, setLoggedUser] = useState(null);
@@ -39,7 +40,7 @@ const CheckAuth = () => {
 
         const data = await response.json();
 
-        setLoggedUser(data);
+        setLoggedUser(data.id);
         setLoaded(true);
       } catch (e) {
         console.log("error:" + e);
@@ -50,6 +51,7 @@ const CheckAuth = () => {
       checkLoginStatus();
     } else {
       setLoaded(true);
+      setLoggedUser(null);
     }
   }, []);
 
@@ -57,28 +59,31 @@ const CheckAuth = () => {
     <>
       {loaded ? (
         <BrowserRouter>
-          <Routes>
-            <Route
-              path="profile"
-              element={<Profile loggedUser={loggedUser} />}
-            />
-            <Route path="login" element={<Login loggedUser={loggedUser} />} />
-            <Route
-              path="register"
-              element={<Register loggedUser={loggedUser} />}
-            />
-            <Route path="/" element={<Courses loggedUser={loggedUser} />} />
-            <Route
-              exact
-              path="course/:id"
-              element={<CourseDetail loggedUser={loggedUser} />}
-            />
-            <Route
-              path="questions/:id"
-              element={<QuestionDetail loggedUser={loggedUser} />}
-            />
-            <Route path="top" element={<Top loggedUser={loggedUser} />} />
-          </Routes>
+          <div>
+            <Navigation loggedUser={loggedUser} />
+            <Routes>
+              <Route
+                path="profile"
+                element={<Profile loggedUser={loggedUser} />}
+              />
+              <Route path="login" element={<Login loggedUser={loggedUser} />} />
+              <Route
+                path="register"
+                element={<Register loggedUser={loggedUser} />}
+              />
+              <Route path="/" element={<Courses loggedUser={loggedUser} />} />
+              <Route
+                exact
+                path="course/:id"
+                element={<CourseDetail loggedUser={loggedUser} />}
+              />
+              <Route
+                path="questions/:id"
+                element={<QuestionDetail loggedUser={loggedUser} />}
+              />
+              <Route path="top" element={<Top loggedUser={loggedUser} />} />
+            </Routes>
+          </div>
         </BrowserRouter>
       ) : (
         <p>Loading...</p>
