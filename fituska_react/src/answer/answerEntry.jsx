@@ -11,7 +11,8 @@ const AnswerEntry = ({
   is_correct,
   reactions,
   upvotes,
-  question_status,
+  question_open,
+  loggedUser,
 }) => {
   const [showReactions, setShowReactions] = useState(false);
   const [upvotesCount, setUpvotesCount] = useState(0);
@@ -38,11 +39,11 @@ const AnswerEntry = ({
             Dátum: {formatedDate}
           </div>
           <div className="h2 flex-fill text-end m-1">{upvotes.length}</div>
-          {
+          {(loggedUser || question_open) && (
             <div role="button" className="h2 m-1">
               <a onClick={() => upvoteAnswer()}>{upvoteIcon}</a>
             </div>
-          }
+          )}
         </div>
         <div>{description}</div>
       </div>

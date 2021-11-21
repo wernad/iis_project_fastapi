@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy import func, desc
+from sqlalchemy.orm import Session
 
 import models, schemas
 
@@ -9,8 +10,29 @@ def get_user_by_id(db: Session, user_id: int):
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
+def get_users(db: Session):
+    return db.query(models.User).all()
+
+def get_users_with_upvotes(db: Session):
+    subq =  db.query(models.User, models.Upvote,  models.Answer
+        ).filter(
+            models.Upvote.answer_id == models.Answer.id
+        ).filter(
+            models.User.id == models.Answer.user_id
+        ).with_entities(models.User.first_name, models.User.last_name, models.User.email).subquery()
+    return db.query(subq, func.count(subq.c.email).label("votes")).group_by(subq.c.email).order_by(desc("votes")).all()
+
+def get_users_with_upvotes_by_course(db: Session, course_id):
+    subq =  db.query(models.User, models.Upvote, models.Answer, models.Question, models.Course
+        ).filter(
+            models.Upvote.answer_id == models.Answer.id
+        ).filter(
+            models.User.id == models.Answer.user_id
+        ).filter(models.Answer.question_id == models.Question.id
+        ).filter(models.Question.course_id == models.Course.id
+        ).filter(models.Course.id == course_id
+        ).with_entities(models.User.first_name, models.User.last_name, models.User.email, models.Course.name).subquery()
+    return db.query(subq, func.count(subq.c.email).label("votes")).group_by(subq.c.email, subq.c.name).order_by(desc("votes")).all()
 
 def create_user(db: Session, user: schemas.UserCreate):
     new_user = models.User(
@@ -38,8 +60,17 @@ def get_categories(db: Session, skip: int = 0, limit: int = 100):
 def get_course_by_id(db: Session, course_id):
     return db.query(models.Course).filter(models.Course.id == course_id).first()
 
-def get_approved_courses(db: Session, skip: int = 0, limit: int = 100):
+def get_approved_courses(db: Session):
     return db.query(models.Course).filter(models.Course.is_approved == True).all()
+
+def get_courses_with_upvotes_only(db: Session):
+    subq =  db.query(models.Upvote, models.Answer, models.Question, models.Course
+        ).filter(
+            models.Upvote.answer_id == models.Answer.id
+        ).filter(models.Answer.question_id == models.Question.id
+        ).filter(models.Question.course_id == models.Course.id
+        ).with_entities(models.Course.id, models.Course.name).subquery()
+    return db.query(subq).group_by(subq.c.id).all()
 
 #Question
 def get_question_by_id(db: Session, question_id: int):

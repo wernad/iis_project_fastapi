@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Cookie from "universal-cookie";
-import { Formik, Form, useField } from "formik";
-import * as Yup from "yup";
 
 import Top from "../forum/top";
 import Login from "../user/login";

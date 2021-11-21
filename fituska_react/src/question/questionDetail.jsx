@@ -75,7 +75,8 @@ const QuestionDetail = ({ loggedUser }) => {
                         reactions={answer.reactions}
                         upvotes={answer.upvotes}
                         user={answer.user}
-                        question_status={question.is_ipen}
+                        question_open={question.is_open}
+                        loggedUser={loggedUser}
                       />
                     </div>
                   );

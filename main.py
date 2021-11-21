@@ -66,12 +66,31 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     token = auth.encode_token(user.id)
     return {"access_token": token, "token_type": "bearer"}
 
+
 @app.post("/checkauth", response_model=schemas.TokenOwner)
 async def check_if_logged_in(tokenData: schemas.Token, db: Session = Depends(get_db)):
     if not tokenData:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in. Please log in.")
     user_id = auth.decode_token(tokenData.access_token)
     return  user_id
+
+@app.get("/courseswithupvotes")
+async def get_courses_with_upvotes_only(db: Session = Depends(get_db)):
+    courses= crud.get_courses_with_upvotes_only(db)
+
+    return courses
+
+@app.get("/topusers")
+async def get_top_users(db: Session = Depends(get_db)):
+    top_users = crud.get_users_with_upvotes(db)
+
+    return top_users
+
+@app.get("/topuserscourse/{course_id}")
+async def get_top_users_in_course(course_id, db: Session = Depends(get_db)):
+    top_users = crud.get_users_with_upvotes_by_course(db, course_id)
+
+    return top_users
 
 @app.get("/profile/{user_id}", response_model=schemas.User)
 async def get_profile(user_id, db: Session = Depends(get_db)):
@@ -80,8 +99,8 @@ async def get_profile(user_id, db: Session = Depends(get_db)):
     return user
 
 @app.get("/courses")
-async def get_courses(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    courses = crud.get_approved_courses(db, skip=skip, limit=limit)
+async def get_courses(db: Session = Depends(get_db)):
+    courses = crud.get_approved_courses(db)
     return courses
 
 @app.get("/course/{course_id}", response_model=schemas.CourseDetail)
@@ -100,6 +119,7 @@ async def get_my_courses(user_id, db: Session = Depends(get_db)):
     my_courses = crud.get_user_by_id(db, user_id)
 
     return my_courses
+
 
 @app.get("/question/{question_id}", response_model=schemas.Question)
 async def get_question_detail(question_id, db: Session = Depends(get_db)):
