@@ -7,9 +7,12 @@ from sqlalchemy.sql.expression import false
 from sqlalchemy.sql.sqltypes import DateTime
 
 User = ForwardRef('User')
+UserCourseUserId = ForwardRef('UserId')
 UserBase = ForwardRef('UserBase')
 Course = ForwardRef('Course')
+CourseUsers = ForwardRef('CourseUsers')
 
+#Token
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -17,21 +20,23 @@ class Token(BaseModel):
 class TokenOwner(BaseModel):
     id: Optional[int]
 
+#Reaction
 class ReactionBase(BaseModel):
     description: str
     date: datetime
+    answer_id: int
+    user_id: int
 
 class ReactionCreate(ReactionBase):
     pass
 
 class Reaction(ReactionBase):
-    answer_id: int
-    user_id: int
     user: Optional[UserBase] = None
 
     class Config:
         orm_mode = True
 
+#Upvote
 class UpvoteBase(BaseModel):
     answer_id: int
     user_id: int
@@ -44,6 +49,7 @@ class Upvote(UpvoteBase):
     class Config:
         orm_mode = True
 
+#Answer
 class AnswerBase(BaseModel):
     description: str
     date: datetime = datetime.now()
@@ -63,6 +69,7 @@ class Answer(AnswerBase):
     class Config:
         orm_mode = True
 
+#Question
 class QuestionBase(BaseModel):
     title: str
     description: str
@@ -79,10 +86,12 @@ class Question(QuestionBase):
     course_id: int
     answers: List[Answer] = []
     user: Optional[UserBase] = None
+    course: Optional[CourseUsers] = None
 
     class Config:
         orm_mode = True
 
+#UserCourse
 class UserCourseBase(BaseModel):
     is_teacher: bool
     is_approved: bool
@@ -98,6 +107,13 @@ class UserCourse(UserCourseBase):
     class Config:
         orm_mode = True
 
+class UserCourseUserId(UserCourseBase):
+    user_id: int
+
+    class Config:
+        orm_mode = True
+
+#Category
 class CategoryBase(BaseModel):
     name: str
 
@@ -119,6 +135,7 @@ class CategoryDetail(CategoryBase):
     class Config:
         orm_mode = True
 
+#Course
 class CourseBase(BaseModel):
     name: str
     is_approved: bool
@@ -133,6 +150,12 @@ class Course(CourseBase):
     class Config:
         orm_mode = True
 
+class CourseUsers(BaseModel):
+    users: List[UserCourseUserId] = []
+
+    class Config:
+        orm_mode = True
+
 class CourseDetail(CourseBase):
     id: int
     users: List[UserCourse] = []
@@ -142,6 +165,7 @@ class CourseDetail(CourseBase):
     class Config:
         orm_mode = True
 
+#User
 class UserBase(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
@@ -168,4 +192,5 @@ class UserMyCourses(BaseModel):
 Reaction.update_forward_refs()
 Answer.update_forward_refs()
 Question.update_forward_refs()
+CourseUsers.update_forward_refs()
 UserCourse.update_forward_refs()

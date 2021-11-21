@@ -1,6 +1,7 @@
 from sqlalchemy import func, desc
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.elements import False_
+from sqlalchemy.sql.expression import false
 
 import models, schemas
 
@@ -15,21 +16,22 @@ def get_users(db: Session):
     return db.query(models.User).all()
 
 def get_users_with_upvotes(db: Session):
-    subq =  db.query(models.User, models.Upvote,  models.Answer
-        ).filter(
-            models.Upvote.answer_id == models.Answer.id
-        ).filter(
-            models.User.id == models.Answer.user_id
+    subq =  db.query(models.User, models.Upvote,  models.Answer, models.Question
+        ).filter(models.Upvote.answer_id == models.Answer.id
+        ).filter(models.User.id == models.Answer.user_id
+        ).filter(models.Answer.is_correct == True
+        ).filter(models.Answer.question_id == models.Question.id
+        ).filter(models.Question.is_open == False
         ).with_entities(models.User.first_name, models.User.last_name, models.User.email).subquery()
     return db.query(subq, func.count(subq.c.email).label("votes")).group_by(subq.c.email).order_by(desc("votes")).all()
 
 def get_users_with_upvotes_by_course(db: Session, course_id):
     subq =  db.query(models.User, models.Upvote, models.Answer, models.Question, models.Course
-        ).filter(
-            models.Upvote.answer_id == models.Answer.id
-        ).filter(
-            models.User.id == models.Answer.user_id
+        ).filter(models.Upvote.answer_id == models.Answer.id
+        ).filter(models.User.id == models.Answer.user_id
+        ).filter(models.Answer.is_correct == True
         ).filter(models.Answer.question_id == models.Question.id
+        ).filter(models.Question.is_open == False
         ).filter(models.Question.course_id == models.Course.id
         ).filter(models.Course.id == course_id
         ).with_entities(models.User.first_name, models.User.last_name, models.User.email, models.Course.name).subquery()
@@ -66,9 +68,10 @@ def get_approved_courses(db: Session):
 
 def get_courses_with_upvotes_only(db: Session):
     subq =  db.query(models.Upvote, models.Answer, models.Question, models.Course
-        ).filter(
-            models.Upvote.answer_id == models.Answer.id
+        ).filter(models.Upvote.answer_id == models.Answer.id
+        ).filter(models.Answer.is_correct == True
         ).filter(models.Answer.question_id == models.Question.id
+        ).filter(models.Question.is_open == False
         ).filter(models.Question.course_id == models.Course.id
         ).with_entities(models.Course.id, models.Course.name).subquery()
     return db.query(subq).group_by(subq.c.id).all()
@@ -130,6 +133,18 @@ def get_reactions_by_answer(db: Session, answer_id: int):
 
 def get_reactions(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Reaction).offset(skip).limit(limit).all()
+
+def create_reaction(db: Session, reaction: schemas.ReactionCreate):
+    new_reaction = models.Reaction(
+        description= reaction.description,
+        user_id= reaction.user_id,
+        date= reaction.date,
+        answer_id=reaction.answer_id
+    )
+    db.add(new_reaction)
+    db.commit()
+    db.refresh(new_reaction)
+    return new_reaction 
 
 #Upvote
 def get_upvotes_by_user(db: Session, user_id: int):

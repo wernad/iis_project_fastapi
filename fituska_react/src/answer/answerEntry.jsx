@@ -2,9 +2,13 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 import ReactionEntry from "../reaction/reactionEntry";
+import AddReactionEntry from "../reaction/addReactionEntry";
 
 const AnswerEntry = ({
   id,
+  loggedUser,
+  teachers,
+  students,
   description,
   date,
   user,
@@ -12,9 +16,7 @@ const AnswerEntry = ({
   reactions,
   upvotes,
   question_open,
-  loggedUser,
 }) => {
-  const [showReactions, setShowReactions] = useState(false);
   const [upvotesCount, setUpvotesCount] = useState(0);
   const formatedDate = new Date(date).toLocaleString();
   const name = user.first_name + " " + user.last_name;
@@ -24,6 +26,37 @@ const AnswerEntry = ({
   function upvoteAnswer() {
     console.log("clicked");
   }
+
+  const addReaction = async (e) => {
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        description: new FormData(e.target).get("reactionText"),
+        date: new Date().toISOString(),
+        answer_id: id,
+        user_id: loggedUser,
+      }),
+    };
+
+    try {
+      const response = await fetch(
+        "http://localhost:8000/addreaction",
+        requestOptions
+      );
+
+      const data = await response.json();
+
+      let new_reactions = reactions;
+      new_reactions.append(data);
+      reactions = new_reactions;
+    } catch (e) {
+      console.log("error:" + e);
+    }
+  };
+
   return (
     <>
       <div
@@ -64,6 +97,13 @@ const AnswerEntry = ({
               </div>
             );
           })}
+        <AddReactionEntry
+          loggedUser={loggedUser}
+          teachers={teachers}
+          students={students}
+          question_open={question_open}
+          addReaction={addReaction}
+        />
       </div>
     </>
   );

@@ -36,7 +36,7 @@ const Login = ({ loggedUser }) => {
 
     cookies.set("access_token", tokenData.access_token, {
       httpOnly: false,
-      maxAge: 1800,
+      maxAge: 3600,
       path: "/",
     });
 

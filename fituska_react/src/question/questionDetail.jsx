@@ -8,6 +8,8 @@ const QuestionDetail = ({ loggedUser }) => {
   const [author, setAuthor] = useState({});
   const [question, setQuestion] = useState({});
   const [answers, setAnswers] = useState([]);
+  const [teachers, setTeachers] = useState([]);
+  const [students, setStudents] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const { id } = useParams();
 
@@ -31,6 +33,30 @@ const QuestionDetail = ({ loggedUser }) => {
         setQuestion(data);
         setAuthor(data.user);
         setAnswers(data.answers);
+        setTeachers(
+          data.course.users
+            .filter((user) => {
+              if (user.is_teacher == true && user.is_approved == true) {
+                return user;
+              }
+            })
+            .map((user) => {
+              return user.user_id;
+            })
+        );
+
+        setStudents(
+          data.course.users
+            .filter((user) => {
+              if (user.is_teacher == false && user.is_approved == true) {
+                return user;
+              }
+            })
+            .map((user) => {
+              return user.user_id;
+            })
+        );
+
         setLoaded(true);
       } catch (e) {
         console.log("error:" + e);
@@ -101,6 +127,8 @@ const QuestionDetail = ({ loggedUser }) => {
                       <AnswerEntry
                         key={key}
                         id={answer.id}
+                        teachers={teachers}
+                        students={students}
                         description={answer.description}
                         date={answer.date}
                         is_correct={answer.is_correct}
@@ -115,8 +143,10 @@ const QuestionDetail = ({ loggedUser }) => {
                 })}
 
               <AddAnswerEntry
+                teachers={teachers}
+                students={students}
                 loggedUser={loggedUser}
-                question_id={id}
+                course_id={question.course_id}
                 question_open={question.is_open}
                 question_author={question.user_id}
                 answers_authors={question.answers.map((answer, key) => {

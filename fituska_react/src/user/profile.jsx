@@ -52,7 +52,6 @@ const Profile = ({ loggedUser }) => {
         );
 
         const data = await response.json();
-        console.log("here " + data);
         setUser(data);
         setLoaded(true);
       } catch (e) {
@@ -61,7 +60,11 @@ const Profile = ({ loggedUser }) => {
     }
 
     fetchProfileData();
+    return () => {
+      console.log("cleaned up");
+    };
   }, []);
+
   if (loaded && !loggedUser) {
     return <Navigate to="/" />;
   }
@@ -79,16 +82,6 @@ const Profile = ({ loggedUser }) => {
                   Meno: {" " + user.first_name + " " + user.last_name}
                 </div>
                 <div className="">Kontakt: {" " + user.email}</div>
-              </div>
-              <div>
-                <button className="btn btn-primary my-2 btn-sm mx-2">
-                  Zmeniť email
-                </button>
-              </div>
-              <div>
-                <button className="btn btn-primary my-2 btn-sm mx-2">
-                  Zmeniť heslo
-                </button>
               </div>
             </div>
           </div>

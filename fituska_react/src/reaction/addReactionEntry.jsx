@@ -1,32 +1,22 @@
 import React, { useState } from "react";
 
-const AddAnswerEntry = ({
+const AddReactionEntry = ({
   loggedUser,
   teachers,
   students,
-  question_author,
   question_open,
-  answers_authors,
-  addAnswer,
+  addReaction,
 }) => {
-  const [answerText, setAnswerText] = useState("");
-  function updateAnswerText(e) {
-    setAnswerText(e.target.value);
+  const [reactionText, setReactionText] = useState("");
+  function updateReactionText(e) {
+    setReactionText(e.target.value);
   }
-  function checkIfCanAnswer() {
+  function checkIfCanReact() {
     if (!loggedUser) {
       return false;
     }
 
-    if (loggedUser == question_author) {
-      return false;
-    }
-
     if (!question_open) {
-      return false;
-    }
-
-    if (answers_authors.includes(loggedUser)) {
       return false;
     }
 
@@ -43,29 +33,29 @@ const AddAnswerEntry = ({
 
   return (
     <>
-      {checkIfCanAnswer() && (
+      {checkIfCanReact() && (
         <div className="">
-          <form onSubmit={(e) => addAnswer(e)}>
+          <form onSubmit={(e) => addReaction(e)}>
             <div className="form-group">
-              <label htmlFor="answerText">Text odpovede:*</label>
+              <label htmlFor="reactionText">Text reakcie:*</label>
               <textarea
-                id="answerText"
-                name="answerText"
+                id="reactionText"
+                name="reactionText"
                 className="my-1 form-control"
                 type="text"
                 rows="4"
-                onChange={(answer) => updateAnswerText(answer)}
+                onChange={(reaction) => updateReactionText(reaction)}
               />
             </div>
             <div className="form-group">
               <button
-                disabled={answerText.trim().length > 0 ? false : true}
+                disabled={reactionText.trim().length > 0 ? false : true}
                 className="btn btn-primary form-control"
                 type="submit"
               >
                 Odpovedať
               </button>
-              {answerText.trim().length > 0 ? (
+              {reactionText.trim().length > 0 ? (
                 ""
               ) : (
                 <span className="h6 text-danger">
@@ -80,4 +70,4 @@ const AddAnswerEntry = ({
   );
 };
 
-export default AddAnswerEntry;
+export default AddReactionEntry;

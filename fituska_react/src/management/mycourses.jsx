@@ -22,7 +22,7 @@ const MyCourses = ({ loggedUser }) => {
         );
 
         const data = await response.json();
-        console.log("myc " + JSON.stringify(data));
+
         setMyCourses(data.courses);
         setLoaded(true);
       } catch (e) {

@@ -8,7 +8,6 @@ const MyCoursesDetail = ({
   course_name,
   categories,
 }) => {
-  console.log(course_name);
   return (
     <>
       <div className="card">
