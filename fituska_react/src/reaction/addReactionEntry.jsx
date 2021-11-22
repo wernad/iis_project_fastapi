@@ -43,7 +43,7 @@ const AddReactionEntry = ({
                 name="reactionText"
                 className="my-1 form-control"
                 type="text"
-                rows="4"
+                rows="2"
                 onChange={(reaction) => updateReactionText(reaction)}
               />
             </div>
@@ -53,7 +53,7 @@ const AddReactionEntry = ({
                 className="btn btn-primary form-control"
                 type="submit"
               >
-                Odpovedať
+                Reagovať
               </button>
               {reactionText.trim().length > 0 ? (
                 ""
