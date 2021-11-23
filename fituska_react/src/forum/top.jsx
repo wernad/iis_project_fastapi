@@ -82,7 +82,7 @@ const Top = ({ loggedUser }) => {
                 courses.map((course, key) => {
                   return (
                     <>
-                      {courseToShow == course.id && (
+                      {courseToShow === course.id && (
                         <div key={key}>
                           <TopCourseTotal
                             key={key}

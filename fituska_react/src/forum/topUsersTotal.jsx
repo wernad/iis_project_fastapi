@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const TopTotal = ({}) => {
+const TopTotal = () => {
   const [topUsers, setTopUsers] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
@@ -28,7 +28,7 @@ const TopTotal = ({}) => {
       }
     }
     getTopUsers();
-  }, [loaded]);
+  }, []);
   return (
     <>
       {loaded && (

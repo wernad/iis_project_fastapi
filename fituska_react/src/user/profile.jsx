@@ -1,36 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Navigate } from "react-router-dom";
-import { Formik, Form, useField } from "formik";
-import * as Yup from "yup";
+import { Navigate } from "react-router-dom";
 
 import MyCourses from "../management/myCourses";
-
-const MyTextInput = ({ label, ...props }) => {
-  const [field, meta] = useField(props);
-  return (
-    <>
-      <label htmlFor={props.id || props.name}>{label}</label>
-      <input
-        className={
-          "form-control" + (meta.error && meta.touched ? " is-invalid" : "")
-        }
-        {...field}
-        {...props}
-      />
-      {meta.touched && meta.error ? (
-        <div className="invalid-feedback">{meta.error}</div>
-      ) : null}
-    </>
-  );
-};
-
-const ValidationSchemaEmail = Yup.object({
-  email: Yup.string().email("Invalid email address").required("Required"),
-});
-
-const ValidationSchemaPassword = Yup.object({
-  password: Yup.string().required("Required"),
-});
 
 const Profile = ({ loggedUser }) => {
   const [user, setUser] = useState({});
@@ -92,7 +63,7 @@ const Profile = ({ loggedUser }) => {
           </div>
         </>
       ) : (
-        <p>Loading...</p>
+        <p>Načítavanie...</p>
       )}
     </>
   );

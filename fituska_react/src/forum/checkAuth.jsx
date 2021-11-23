@@ -86,7 +86,7 @@ const CheckAuth = () => {
           </div>
         </BrowserRouter>
       ) : (
-        <p>Loading...</p>
+        <p>Načítavanie...</p>
       )}
     </>
   );

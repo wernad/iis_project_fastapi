@@ -20,7 +20,8 @@ for user in file['users']:
         last_name = user['last_name'],
         email = user['email'],
         password= get_password_hash(user['password']),
-        management_level = user['management_level']
+        management_level = user['management_level'],
+        active = user['active']
     )
     db.add(new_user)
 

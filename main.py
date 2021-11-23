@@ -51,8 +51,14 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     user = crud.get_user_by_email(db, form_data.username)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    if not user.active:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User is inactive.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -74,7 +80,11 @@ async def check_if_logged_in(tokenData: schemas.Token, db: Session = Depends(get
     user_id = auth.decode_token(tokenData.access_token)
     return  user_id
 
-@app.post("/addanswer/")
+@app.post("/addquestion")
+async def create_question(form_data: schemas.QuestionCreate, db: Session = Depends(get_db)):
+    return crud.create_question(db, form_data)
+
+@app.post("/addanswer")
 async def create_answer(form_data: schemas.AnswerCreate, db: Session = Depends(get_db)):
     answer = crud.get_answer_by_question_and_user(db, form_data.question_id, form_data.user_id)
     if answer:
@@ -85,9 +95,13 @@ async def create_answer(form_data: schemas.AnswerCreate, db: Session = Depends(g
 
     return crud.create_answer(db, form_data)
 
-@app.post("/addreaction/")
+@app.post("/addreaction")
 async def create_reaction(form_data: schemas.ReactionCreate, db: Session = Depends(get_db)):
     return crud.create_reaction(db, form_data)
+
+@app.post("/addupvote")
+async def create_upvote(from_data: schemas.UpvoteCreate, db: Session = Depends(get_db)):
+    return crud.create_upvote(db, from_data)
 
 @app.get("/courseswithupvotes")
 async def get_courses_with_upvotes_only(db: Session = Depends(get_db)):

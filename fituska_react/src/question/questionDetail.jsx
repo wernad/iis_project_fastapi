@@ -5,9 +5,11 @@ import AnswerEntry from "../answer/answerEntry";
 import AddAnswerEntry from "../answer/addAnswerEntry";
 
 const QuestionDetail = ({ loggedUser }) => {
+  const [statusCode, setStatusCode] = useState();
   const [author, setAuthor] = useState({});
   const [question, setQuestion] = useState({});
   const [answers, setAnswers] = useState([]);
+  const [totalUpvotes, setTotalUpvotes] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [students, setStudents] = useState([]);
   const [loaded, setLoaded] = useState(false);
@@ -29,16 +31,17 @@ const QuestionDetail = ({ loggedUser }) => {
         );
 
         const data = await response.json();
-
+        setStatusCode(response.status);
         setQuestion(data);
         setAuthor(data.user);
         setAnswers(data.answers);
         setTeachers(
           data.course.users
             .filter((user) => {
-              if (user.is_teacher == true && user.is_approved == true) {
+              if (user.is_teacher === true && user.is_approved === true) {
                 return user;
               }
+              return null;
             })
             .map((user) => {
               return user.user_id;
@@ -48,18 +51,27 @@ const QuestionDetail = ({ loggedUser }) => {
         setStudents(
           data.course.users
             .filter((user) => {
-              if (user.is_teacher == false && user.is_approved == true) {
+              if (user.is_teacher === false && user.is_approved === true) {
                 return user;
               }
+              return null;
             })
             .map((user) => {
               return user.user_id;
             })
         );
 
+        setTotalUpvotes(
+          data.answers
+            .map((answer) => answer.upvotes)
+            .flat()
+            .map((upvote) => upvote.user_id)
+        );
+
         setLoaded(true);
       } catch (e) {
         console.log("error:" + e);
+        setStatusCode(e);
       }
     }
     fetchQuestionData();
@@ -127,6 +139,7 @@ const QuestionDetail = ({ loggedUser }) => {
                       <AnswerEntry
                         key={key}
                         id={answer.id}
+                        user_id={answer.user_id}
                         teachers={teachers}
                         students={students}
                         description={answer.description}
@@ -134,6 +147,7 @@ const QuestionDetail = ({ loggedUser }) => {
                         is_correct={answer.is_correct}
                         reactions={answer.reactions}
                         upvotes={answer.upvotes}
+                        totalUpvotes={totalUpvotes}
                         user={answer.user}
                         question_open={question.is_open}
                         loggedUser={loggedUser}
@@ -158,7 +172,9 @@ const QuestionDetail = ({ loggedUser }) => {
           </div>
         </>
       ) : (
-        <p className="d-flex justify-content-center m-3">Loading...</p>
+        <p className="d-flex justify-content-center m-3">
+          {statusCode ? "Otázka neexistuje." : "Načítavanie..."}
+        </p>
       )}
     </>
   );

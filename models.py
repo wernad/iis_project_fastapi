@@ -15,6 +15,8 @@ class User(Base):
 
     management_level = Column(Integer, nullable=True)
 
+    active = Column(Boolean)
+
     questions = relationship('Question', back_populates='user')
     answers = relationship('Answer', back_populates='user')
     reactions = relationship('Reaction', back_populates='user')

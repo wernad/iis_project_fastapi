@@ -2,7 +2,7 @@ import React from "react";
 import Cookies from "universal-cookie";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
-import { useNavigate, useLocation, Navigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 
 const MyTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
@@ -42,7 +42,7 @@ const Login = ({ loggedUser }) => {
 
     cookies.set("token_type", tokenData.token_type, {
       httpOnly: false,
-      maxAge: 1800,
+      maxAge: 3600,
       path: "/",
     });
 

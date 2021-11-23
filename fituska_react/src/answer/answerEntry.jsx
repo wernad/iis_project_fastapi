@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 
 import ReactionEntry from "../reaction/reactionEntry";
 import AddReactionEntry from "../reaction/addReactionEntry";
@@ -7,6 +6,7 @@ import AddReactionEntry from "../reaction/addReactionEntry";
 const AnswerEntry = ({
   id,
   loggedUser,
+  user_id,
   teachers,
   students,
   description,
@@ -15,17 +15,14 @@ const AnswerEntry = ({
   is_correct,
   reactions,
   upvotes,
+  totalUpvotes,
   question_open,
 }) => {
-  const [upvotesCount, setUpvotesCount] = useState(0);
+  const [upvoteCount, setUpvoteCount] = useState(upvotes.length);
   const formatedDate = new Date(date).toLocaleString();
   const name = user.first_name + " " + user.last_name;
 
   const upvoteIcon = "▲";
-
-  function upvoteAnswer() {
-    console.log("clicked");
-  }
 
   const addReaction = async (e) => {
     const requestOptions = {
@@ -57,6 +54,75 @@ const AnswerEntry = ({
     }
   };
 
+  async function addUpvote() {
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        answer_id: id,
+        user_id: loggedUser,
+      }),
+    };
+
+    try {
+      const response = await fetch(
+        "http://localhost:8000/addupvote",
+        requestOptions
+      );
+
+      const data = await response.json();
+
+      let new_upvotes = upvotes;
+      new_upvotes.push(data);
+      upvotes = new_upvotes;
+      setUpvoteCount(upvoteCount + 1);
+    } catch (e) {
+      console.log("error:" + e);
+    }
+  }
+
+  function showUpvoteButton() {
+    if (!question_open) {
+      return false;
+    }
+
+    if (!loggedUser) {
+      return false;
+    }
+
+    if (teachers.includes(loggedUser)) {
+      return false;
+    }
+
+    if (!students.includes(loggedUser)) {
+      return false;
+    }
+    if (loggedUser === user_id) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function alreadyUpvoted() {
+    let upvotesByUser = upvotes
+      .filter((upvote) => {
+        if (upvote.user_id === loggedUser) {
+          return upvote;
+        }
+        return null;
+      })
+      .map((upvote) => {
+        return upvote.answer_id;
+      });
+
+    if (upvotesByUser.length > 0) {
+      return true;
+    }
+  }
+  console.log(totalUpvotes);
   return (
     <>
       <div
@@ -71,12 +137,18 @@ const AnswerEntry = ({
             <br />
             Dátum: {formatedDate}
           </div>
-          <div className="h2 flex-fill text-end m-1">{upvotes.length}</div>
+          <div className="h2 flex-fill text-end m-1">{upvoteCount}</div>
           {(loggedUser || question_open) && (
             <div role="button" className="h2 m-1">
-              <a className="btn btn-secondary" onClick={() => upvoteAnswer()}>
-                {upvoteIcon}
-              </a>
+              {showUpvoteButton() && (
+                <button
+                  disabled={alreadyUpvoted() ? true : false}
+                  className="btn btn-secondary"
+                  onClick={() => addUpvote()}
+                >
+                  {upvoteIcon}
+                </button>
+              )}
             </div>
           )}
         </div>

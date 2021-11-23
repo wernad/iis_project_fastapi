@@ -1,5 +1,5 @@
 from sqlalchemy import func, desc
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, descriptor_props
 from sqlalchemy.sql.elements import False_
 from sqlalchemy.sql.expression import false
 
@@ -42,7 +42,8 @@ def create_user(db: Session, user: schemas.UserCreate):
         first_name= user.first_name,
         last_name= user.last_name,
         email= user.email,
-        password= user.password
+        password= user.password,
+        active= True
     )
     db.add(new_user)
     db.commit()
@@ -91,6 +92,22 @@ def get_questions_by_course(db: Session, course_id: int):
 
 def get_questions(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Question).offset(skip).limit(limit).all()
+
+def create_question(db: Session, question: schemas.QuestionCreate):
+    question = models.Question(
+        title= question.title,
+        description= question.description,
+        date= question.date,
+        user_id= question.user_id,
+        category_id= question.category_id,
+        course_id= question.course_id,
+        is_open= True
+    )
+    db.add(question)
+    db.commit()
+    db.refresh(question)
+
+    return question
 
 #Answer
 def get_answer_by_id(db: Session, answer_id: int):
@@ -155,6 +172,16 @@ def get_upvotes_by_answer(db: Session, answer_id: int):
 
 def get_upvotes(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Upvote).offset(skip).limit(limit).all()
+
+def create_upvote(db: Session, form_data: schemas.UpvoteCreate):
+    new_upvote = models.Upvote(
+        user_id=form_data.user_id,
+        answer_id=form_data.answer_id
+    )
+    db.add(new_upvote)
+    db.commit()
+    db.refresh(new_upvote)
+    return new_upvote 
 
 #UserCourse
 def get_usercourse_by_user(db: Session, user_id: int):

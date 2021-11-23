@@ -18,7 +18,7 @@ const AddAnswerEntry = ({
       return false;
     }
 
-    if (loggedUser == question_author) {
+    if (loggedUser === question_author) {
       return false;
     }
 
@@ -44,7 +44,7 @@ const AddAnswerEntry = ({
   return (
     <>
       {checkIfCanAnswer() && (
-        <div className="">
+        <div>
           <form onSubmit={(e) => addAnswer(e)}>
             <div className="form-group">
               <label htmlFor="answerText">Text odpovede:*</label>

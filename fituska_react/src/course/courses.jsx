@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-import CourseEntry from "./courseEntry";
+import { Link } from "react-router-dom";
 
 const Courses = ({ loggedUser }) => {
   const [courses, setCourses] = useState([]);
@@ -43,13 +42,17 @@ const Courses = ({ loggedUser }) => {
             courses.map((course, key) => {
               return (
                 <div key={key}>
-                  <CourseEntry key={key} name={course.name} id={course.id} />
+                  <div className="card col-md-5 my-1 mx-auto">
+                    <div className="mx-auto my-2">
+                      <Link to={`./course/${course.id}`}> {course.name}</Link>
+                    </div>
+                  </div>
                 </div>
               );
             })}
         </div>
       ) : (
-        <p className="d-flex justify-content-center m-3">Loading...</p>
+        <p className="d-flex justify-content-center m-3">Načítavanie...</p>
       )}
     </>
   );
