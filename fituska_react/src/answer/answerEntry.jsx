@@ -103,6 +103,17 @@ const AnswerEntry = ({
       return false;
     }
 
+    const totalUpvotesByUser = totalUpvotes.filter((upvoteUserId) => {
+      if (upvoteUserId === loggedUser) {
+        return loggedUser;
+      }
+      return null;
+    });
+
+    if (totalUpvotesByUser.length > 2 && !alreadyUpvoted()) {
+      return false;
+    }
+
     return true;
   }
 
@@ -122,7 +133,7 @@ const AnswerEntry = ({
       return true;
     }
   }
-  console.log(totalUpvotes);
+
   return (
     <>
       <div
@@ -171,6 +182,7 @@ const AnswerEntry = ({
           })}
         <AddReactionEntry
           loggedUser={loggedUser}
+          totalUpvotes={totalUpvotes}
           teachers={teachers}
           students={students}
           question_open={question_open}

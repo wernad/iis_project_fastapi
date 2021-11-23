@@ -5,35 +5,40 @@
       "last_name": "Kučera",
       "email": "jk@gmail.com",
       "password": "iis123",
-      "management_level": null
+      "management_level": null,
+      "active": true
     },
     {
       "first_name": "Jozef",
       "last_name": "Holý",
       "email": "jh@gmail.com",
       "password": "iis123",
-      "management_level": 1
+      "management_level": 1,
+      "active": true
     },
     {
       "first_name": "Jakub",
       "last_name": "Mráz",
       "email": "jmmm@gmail.com",
       "password": "iis123",
-      "management_level": null
+      "management_level": null,
+      "active": true
     },
     {
       "first_name": "Erik",
       "last_name": "Keseg",
       "email": "EK123@gmail.com",
       "password": "iis123",
-      "management_level": null
+      "management_level": null,
+      "active": true
     },
     {
       "first_name": "Ladislav",
       "last_name": "Vanko",
       "email": "ldv645@gmail.com",
       "password": "iis123",
-      "management_level": 0
+      "management_level": 0,
+      "active": true
     }
   ],
 
@@ -165,12 +170,8 @@
       "user_id": 1
     },
     {
-      "answer_id": 2,
-      "user_id": 3
-    },
-    {
       "answer_id": 1,
-      "user_id": 4
+      "user_id": 2
     },
     {
       "answer_id": 3,
