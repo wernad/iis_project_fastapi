@@ -46,8 +46,8 @@ const AnswerEntry = ({
 
       const data = await response.json();
 
-      let new_reactions = reactions;
-      new_reactions.append(data);
+      let new_reactions = reactions.slice();
+      new_reactions.push(data);
       reactions = new_reactions;
     } catch (e) {
       console.log("error:" + e);
@@ -74,7 +74,7 @@ const AnswerEntry = ({
 
       const data = await response.json();
 
-      let new_upvotes = upvotes;
+      let new_upvotes = upvotes.slice();
       new_upvotes.push(data);
       upvotes = new_upvotes;
       setUpvoteCount(upvoteCount + 1);

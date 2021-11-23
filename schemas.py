@@ -97,13 +97,15 @@ class Question(QuestionBase):
 class UserCourseBase(BaseModel):
     is_teacher: bool
     is_approved: bool
+    
 
-class UserCourseCreate(UserCourseBase):
+class UserCourseCreate(BaseModel):
+    user_id: int
+    course_id: int
     pass
 
 class UserCourse(UserCourseBase):
-    user_id: int
-    course_id: int
+    
     course: Optional[Course] = None
 
     class Config:

@@ -99,8 +99,8 @@ const QuestionDetail = ({ loggedUser }) => {
 
       const data = await response.json();
 
-      let new_answers = answers;
-      new_answers.append(data);
+      let new_answers = answers.slice();
+      new_answers.push(data);
       setAnswers(new_answers);
     } catch (e) {
       console.log("error:" + e);

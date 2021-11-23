@@ -103,6 +103,11 @@ async def create_reaction(form_data: schemas.ReactionCreate, db: Session = Depen
 async def create_upvote(from_data: schemas.UpvoteCreate, db: Session = Depends(get_db)):
     return crud.create_upvote(db, from_data)
 
+@app.post("/coursesignup")
+async def apply_to_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db)):
+    return crud.create_usercourse(db, form_data)
+    
+
 @app.get("/courseswithupvotes")
 async def get_courses_with_upvotes_only(db: Session = Depends(get_db)):
     courses= crud.get_courses_with_upvotes_only(db)

@@ -1,5 +1,6 @@
 from sqlalchemy import func, desc
 from sqlalchemy.orm import Session, descriptor_props
+from sqlalchemy.sql import schema
 from sqlalchemy.sql.elements import False_
 from sqlalchemy.sql.expression import false
 
@@ -195,3 +196,15 @@ def get_usercourse_by_course_not_approved_only(db: Session, course_id: int):
 
 def get_upvotes(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.UserCourse).offset(skip).limit(limit).all()
+
+def create_usercourse(db: Session, form_data: schemas.UserCourseCreate):
+    new_userCourse = models.UserCourse(
+        user_id=form_data.user_id,
+        course_id=form_data.course_id,
+        is_approved=False,
+        is_teacher=False
+    )
+    db.add(new_userCourse)
+    db.commit()
+    db.refresh(new_userCourse)
+    return new_userCourse 
