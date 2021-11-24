@@ -148,6 +148,20 @@
       "is_correct": true,
       "question_id": 4,
       "user_id": 3
+    },
+    {
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "date": "2021-11-30 00:09:51",
+      "is_correct": false,
+      "question_id": 2,
+      "user_id": 5
+    },
+    {
+      "description": "Test",
+      "date": "2021-11-19 00:09:51",
+      "is_correct": false,
+      "question_id": 4,
+      "user_id": 4
     }
   ],
   "reactions": [
@@ -232,7 +246,7 @@
     {
       "user_id": 5,
       "course_id": 1,
-      "is_teacher": true,
+      "is_teacher": false,
       "is_approved": true
     },
     {
