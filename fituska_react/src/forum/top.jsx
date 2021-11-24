@@ -47,7 +47,7 @@ const Top = ({ loggedUser }) => {
       setCourseToShow(null);
     } else {
       setShowTotal(false);
-      setCourseToShow(option.target.value);
+      setCourseToShow(Number(option.target.value));
     }
   }
 
