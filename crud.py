@@ -110,6 +110,12 @@ def create_question(db: Session, question: schemas.QuestionCreate):
 
     return question
 
+def close_question(db: Session, question: schemas.Question):
+    print(question)
+    question.is_open = False
+    db.commit()
+    return question
+
 #Answer
 def get_answer_by_id(db: Session, answer_id: int):
     return db.query(models.Answer).filter(models.Answer.id == answer_id).first()
@@ -125,6 +131,11 @@ def get_answer_by_question_and_user(db: Session, question_id: int, user_id: int)
 
 def get_answers(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Answer).offset(skip).limit(limit).all()
+
+def update_answer_correct(db: Session, answer: schemas.Answer):
+    answer.is_correct = True
+    db.flush()
+    return answer
 
 def create_answer(db: Session, answer: schemas.AnswerCreate):
     new_answer = models.Answer(

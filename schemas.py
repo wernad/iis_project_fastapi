@@ -82,6 +82,11 @@ class QuestionBase(BaseModel):
 class QuestionCreate(QuestionBase):
     pass
 
+class QuestionClose(BaseModel):
+    correct_answers: List[int]
+    upvoted_answers: List[int]
+    final_answer: Optional[AnswerCreate] = None
+
 class Question(QuestionBase):
     id: int
     is_open: bool
@@ -183,7 +188,6 @@ class UserBase(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
     email: str
-    active: bool
 
     class Config:
         orm_mode = True

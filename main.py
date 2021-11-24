@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Optional, List
+from typing import Optional, List, final
 
 from fastapi import Depends, FastAPI, HTTPException, status, Cookie
 from fastapi.security import OAuth2PasswordRequestForm
@@ -43,7 +43,7 @@ def get_db():
 async def register(form_data: schemas.UserCreate, db: Session = Depends(get_db)):
     user = crud.get_user_by_email(db, form_data.email)
     if user:
-        raise HTTPException(status_code=400, detail="This email is taken.")
+        raise HTTPException(status_code=400, detail="Tento email už existuje.")
     form_data.password = auth.get_password_hash(form_data.password)
     return crud.create_user(db, form_data)
 
@@ -53,20 +53,20 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found.",
+            detail="Užívateľ neexistuje",
             headers={"WWW-Authenticate": "Bearer"},
         )
     if not user.active:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="User is inactive.",
+            detail="Užívateľ neexistuje",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
     if not auth.verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect password.",
+            detail="Nesprávne heslo.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -91,7 +91,7 @@ async def create_answer(form_data: schemas.AnswerCreate, db: Session = Depends(g
     if answer:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You have already answered this question.",
+            detail="Túto otázku ste už zodpovedali.",
         )
 
     return crud.create_answer(db, form_data)
@@ -108,6 +108,50 @@ async def create_upvote(from_data: schemas.UpvoteCreate, db: Session = Depends(g
 async def apply_to_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db)):
     return crud.create_usercourse(db, form_data)
     
+#TODO
+@app.put("/closequestion")
+async def close_question(form_data: schemas.QuestionClose, db: Session = Depends(get_db)):
+    correct_answers_ids = form_data.correct_answers
+    upvoted_answers_ids = form_data.upvoted_answers
+    final_answer = form_data.final_answer
+
+    user_id = final_answer.user_id
+    question_id = final_answer.question_id
+
+    question = crud.get_question_by_id(db, question_id)
+    
+    if not question:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Otázka nenájdená.",
+        )
+
+    if not question.is_open:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Otázka je už uzatvorená.",
+        )
+
+    for id in correct_answers_ids:
+        answer = crud.get_answer_by_id(db, id)
+
+        answer = crud.update_answer_correct(db, answer)
+        if not answer:
+            db.rollback()
+            raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Otázka je už uzatvorená.",
+        )    
+
+    db.commit()
+    
+    for id in upvoted_answers_ids:
+        crud.create_upvote(db, id, final_answer.user_id)
+    
+    final_answer = crud.create_answer(db, final_answer)
+    closed_question = crud.close_question(db, question)
+
+    return closed_question
 
 @app.get("/courseswithupvotes")
 async def get_courses_with_upvotes_only(db: Session = Depends(get_db)):
@@ -144,7 +188,7 @@ async def get_course_detail(course_id, db: Session = Depends(get_db)):
     if not course.is_approved:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Course not found.",
+            detail="Kurz neexistuje.",
             headers={"WWW-Authenticate": "Bearer"},
         )
     return course
@@ -161,7 +205,7 @@ async def get_question_detail(question_id, db: Session = Depends(get_db)):
     if not question:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Question not found.",
+            detail="Otázka neexistuje",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
