@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useState } from "react";
 
 import ReactionEntry from "../reaction/reactionEntry";
 import AddReactionEntry from "../reaction/addReactionEntry";
@@ -77,7 +77,7 @@ const AnswerEntry = ({
 
       let new_upvotes = upvotes.slice();
       new_upvotes.push(data);
-      upvotes = new_upvotes;
+      upvotes = new_upvotes.slice();
       setUpvoteCount(upvoteCount + 1);
     } catch (e) {
       console.log("error:" + e);
