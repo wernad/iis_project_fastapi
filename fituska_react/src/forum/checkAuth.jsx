@@ -14,8 +14,9 @@ import Navigation from "./navbar";
 const CheckAuth = () => {
   const [loggedUser, setLoggedUser] = useState(null);
   const [loaded, setLoaded] = useState(false);
-  const [errors, setErrors] = useState({});
+
   const cookies = new Cookies();
+
   const access_token = cookies.get("access_token");
   const token_type = cookies.get("token_type");
 
@@ -44,7 +45,6 @@ const CheckAuth = () => {
         setLoaded(true);
       } catch (e) {
         console.log("error:" + e);
-        setErrors(e);
       }
     }
     if (access_token) {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Cookies from "universal-cookie";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
@@ -30,6 +30,7 @@ const ValidationSchema = Yup.object({
 
 const Login = ({ loggedUser }) => {
   const navigate = useNavigate();
+  const [errors, setErrors] = useState("");
 
   function loginHandler(tokenData) {
     const cookies = new Cookies();
@@ -78,8 +79,11 @@ const Login = ({ loggedUser }) => {
                 );
 
                 const data = await response.json();
-
-                loginHandler(data);
+                if (response.status === 200) {
+                  loginHandler(data);
+                } else {
+                  setErrors(data.detail);
+                }
               } catch (e) {
                 console.log("error:" + e);
               }
@@ -87,6 +91,7 @@ const Login = ({ loggedUser }) => {
           >
             {() => (
               <Form className="needs-validation">
+                {errors && <div className="h6 text-danger">{errors}</div>}
                 <div className="form-group">
                   <MyTextInput label="Email:*" name="email" type="text" />
                 </div>

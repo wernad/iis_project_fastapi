@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const MyTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
+
   return (
     <>
       <label htmlFor={props.id || props.name}>{label}</label>
@@ -32,6 +33,8 @@ const validationSchema = Yup.object({
 });
 
 const Register = ({ loggedUser }) => {
+  const navigate = useNavigate();
+  const [errors, setErrors] = useState("");
   if (loggedUser) {
     return <Navigate to="/profile" />;
   }
@@ -54,6 +57,7 @@ const Register = ({ loggedUser }) => {
             validationSchema={validationSchema}
             onSubmit={async (values, isSubmitting) => {
               isSubmitting = true;
+
               const requestOptions = {
                 method: "POST",
                 headers: {
@@ -71,15 +75,20 @@ const Register = ({ loggedUser }) => {
                 "http://localhost:8000/register",
                 requestOptions
               );
+
               const data = await response.json();
-              if (JSON.stringify(data)["status"] === 201) {
-                this.props.history.push("/login");
+
+              if (response.status === 201) {
+                navigate("/login", { replace: true });
+              } else {
+                setErrors(data.detail);
               }
               isSubmitting = false;
             }}
           >
-            {(isSubmitting) => (
+            {() => (
               <Form className="needs-validation">
+                {errors && <div className="h6 text-danger">{errors}</div>}
                 <div className="form-group">
                   <MyTextInput label="Meno:*" name="firstName" type="text" />
                 </div>
