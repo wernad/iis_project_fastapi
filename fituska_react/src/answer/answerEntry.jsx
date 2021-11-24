@@ -20,6 +20,7 @@ const AnswerEntry = ({
   showCloseQuestion,
 }) => {
   const [upvoteCount, setUpvoteCount] = useState(upvotes.length);
+  const [upvotedByUser, setUpvotedByUser] = useState(false);
   const formatedDate = new Date(date).toLocaleString();
   const name = user.first_name + " " + user.last_name;
 
@@ -79,6 +80,7 @@ const AnswerEntry = ({
       new_upvotes.push(data);
       upvotes = new_upvotes.slice();
       setUpvoteCount(upvoteCount + 1);
+      setUpvotedByUser(true);
     } catch (e) {
       console.log("error:" + e);
     }
@@ -188,7 +190,7 @@ const AnswerEntry = ({
             <div role="button" className="h2 m-1">
               {showUpvoteButton() && (
                 <button
-                  disabled={alreadyUpvoted() ? true : false}
+                  disabled={alreadyUpvoted() || upvotedByUser ? true : false}
                   className="btn btn-secondary"
                   onClick={() => addUpvote()}
                 >
