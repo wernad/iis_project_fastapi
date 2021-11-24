@@ -158,7 +158,8 @@ class CourseBase(BaseModel):
     name: str
     is_approved: bool
 
-class CourseCreate(CourseBase):
+class CourseCreate(BaseModel):
+    name: str
     pass
 
 class Course(CourseBase):

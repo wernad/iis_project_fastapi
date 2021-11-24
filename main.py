@@ -1,7 +1,6 @@
-from datetime import timedelta
-from typing import Optional, List, final
-
 from fastapi import Depends, FastAPI, HTTPException, status, Cookie
+from fastapi.encoders import jsonable_encoder
+import json
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -101,8 +100,12 @@ async def create_reaction(form_data: schemas.ReactionCreate, db: Session = Depen
     return crud.create_reaction(db, form_data)
 
 @app.post("/addupvote")
-async def create_upvote(from_data: schemas.UpvoteCreate, db: Session = Depends(get_db)):
-    return crud.create_upvote(db, from_data)
+async def create_upvote(form_data: schemas.UpvoteCreate, db: Session = Depends(get_db)):
+    return crud.create_upvote(db, form_data)
+
+@app.post("/addcourse")
+async def create_course(form_data: schemas.CourseCreate, db: Session = Depends(get_db)):
+    return crud.create_course(db, form_data)
 
 @app.post("/coursesignup")
 async def apply_to_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db)):
@@ -146,7 +149,8 @@ async def close_question(form_data: schemas.QuestionClose, db: Session = Depends
     db.commit()
     
     for id in upvoted_answers_ids:
-        crud.create_upvote(db, id, final_answer.user_id)
+        new_upvote = schemas.UpvoteCreate(answer_id=id, user_id=user_id)
+        crud.create_upvote(db, new_upvote)
     
     final_answer = crud.create_answer(db, final_answer)
     closed_question = crud.close_question(db, question)
