@@ -10,6 +10,7 @@ const CourseDetail = ({ loggedUser }) => {
   const [questions, setQuestions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [courseUsers, setCourseUsers] = useState([]);
+  const [searchField, setSearchField] = useState("");
   const [showAddQuestion, setShowAddQuestion] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const { id } = useParams();
@@ -73,10 +74,10 @@ const CourseDetail = ({ loggedUser }) => {
       );
 
       const data = await response.json();
-      console.log(data);
-      /*let new_questions = questions.slice();
+
+      let new_questions = questions.slice();
       new_questions.push(data);
-      setQuestions(new_questions);*/
+      setQuestions(new_questions);
     } catch (e) {
       console.log("error: " + e);
     }
@@ -119,6 +120,7 @@ const CourseDetail = ({ loggedUser }) => {
         if (user.is_approved === true) {
           return user;
         }
+        return null;
       })
       .map((user) => {
         return user.user_id;
@@ -144,6 +146,20 @@ const CourseDetail = ({ loggedUser }) => {
     return true;
   }
 
+  function applySearchOnQuestion(question) {
+    if (question.title.toLowerCase().includes(searchField.toLowerCase())) {
+      return true;
+    }
+
+    if (
+      question.category.name.toLowerCase().includes(searchField.toLowerCase())
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
   return (
     <>
       {loaded && name ? (
@@ -158,6 +174,7 @@ const CourseDetail = ({ loggedUser }) => {
             addQuestion={addQuestion}
             categories={categories}
           />
+
           <div className={`${showAddQuestion && "d-none"}`}>
             {checkIfCanAsk() && (
               <div className="text-center">
@@ -177,6 +194,14 @@ const CourseDetail = ({ loggedUser }) => {
               </div>
             )}
             <div className="container">
+              <div className="my-1">
+                <input
+                  size="50"
+                  placeholder="Zadajte názov otázky alebo kategórie"
+                  type="text"
+                  onChange={(e) => setSearchField(e.target.value)}
+                ></input>
+              </div>
               <table className="table table-striped">
                 <tbody>
                   <tr>
@@ -188,24 +213,28 @@ const CourseDetail = ({ loggedUser }) => {
                   {questions &&
                     questions.map((question, key) => {
                       return (
-                        <tr key={key}>
-                          <td>
-                            {question.is_open ? (
-                              <span>[Open]</span>
-                            ) : (
-                              <span>[Closed]</span>
-                            )}
-                          </td>
-                          <td>
-                            <Link to={`../questions/${question.id}`}>
-                              {question.title}
-                            </Link>
-                          </td>
-                          <td>{question.category.name}</td>
-                          <td>
-                            {new Date(question.date).toLocaleDateString()}
-                          </td>
-                        </tr>
+                        <>
+                          {applySearchOnQuestion(question) && (
+                            <tr key={key}>
+                              <td>
+                                {question.is_open ? (
+                                  <span>[Open]</span>
+                                ) : (
+                                  <span>[Closed]</span>
+                                )}
+                              </td>
+                              <td>
+                                <Link to={`../questions/${question.id}`}>
+                                  {question.title}
+                                </Link>
+                              </td>
+                              <td>{question.category.name}</td>
+                              <td>
+                                {new Date(question.date).toLocaleDateString()}
+                              </td>
+                            </tr>
+                          )}
+                        </>
                       );
                     })}
                 </tbody>
