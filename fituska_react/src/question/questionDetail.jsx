@@ -128,33 +128,49 @@ const QuestionDetail = ({ loggedUser }) => {
   };
 
   const closeQuestion = async (e) => {
+    const correct_answers = [];
+    const upvoted_answers = [];
+
+    for (const [key, value] of Object.entries(answersCheckboxes)) {
+      if (value.correct) {
+        correct_answers.push(key);
+      }
+      if (value.upvoted) {
+        upvoted_answers.push(key);
+      }
+    }
+
+    const final_answer = {
+      date: new Date().toISOString(),
+      description: new FormData(e.target).get("finalAnswerText"),
+      user_id: loggedUser,
+      question_id: question.id,
+    };
+
     const requestOptions = {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        description: new FormData(e.target).get("answerText"),
-        date: new Date().toISOString(),
-        question_id: question.id,
-        answers_data: answersCheckboxes,
+        correct_answers: correct_answers,
+        upvoted_answers: upvoted_answers,
+        final_answer: final_answer,
       }),
     };
-    /*
+
     try {
       const response = await fetch(
-        "http://localhost:8000/addanswer",
+        "http://localhost:8000/closequestion",
         requestOptions
       );
 
       const data = await response.json();
 
-      let new_answers = answers.slice();
-      new_answers.push(data);
-      setAnswers(new_answers);
+      setQuestion({ ...question, is_open: false });
     } catch (e) {
       console.log("error:" + e);
-    }*/
+    }
   };
 
   function toggleShow() {
@@ -204,7 +220,6 @@ const QuestionDetail = ({ loggedUser }) => {
     setFinalAnswerText(e.target.value);
   }
 
-  console.log(answersCheckboxes);
   return (
     <>
       {loaded && question ? (
@@ -273,12 +288,8 @@ const QuestionDetail = ({ loggedUser }) => {
                 <h2 className="mx-1">Titulok: {question.title}</h2>
                 <div className=" mx-1">
                   Od:
-                  <Link
-                    className="text-dark mx-1"
-                    to={"../users/" + question.user_id}
-                  >
-                    {author.first_name + " " + author.last_name}
-                  </Link>
+                  {" " + author.first_name + " " + author.last_name}
+                  {teachers.includes(question.user_id) && " (Učiteľ)"}
                   <br />
                   Dátum: {new Date(question.date).toLocaleString()}
                 </div>
@@ -305,7 +316,7 @@ const QuestionDetail = ({ loggedUser }) => {
                               className="mx-1 align-middle"
                               onChange={() => toggleCorrectCheckbox(answer.id)}
                             />
-                            {answer.upvotes.length !== 0 && (
+                            {answer.upvotes.length === 0 && (
                               <>
                                 <label htmlFor={"upvote" + answer.id}>
                                   Pridať bod:{" "}

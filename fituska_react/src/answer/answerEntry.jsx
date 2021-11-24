@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
 
 import ReactionEntry from "../reaction/reactionEntry";
 import AddReactionEntry from "../reaction/addReactionEntry";
@@ -135,22 +135,55 @@ const AnswerEntry = ({
     }
   }
 
+  function setAnswerBorder() {
+    if (is_correct) {
+      return "border-success";
+    }
+
+    if (teachers.includes(user_id)) {
+      return "border-warning";
+    }
+
+    return "border-info";
+  }
+
+  function setAnswerBackground() {
+    if (is_correct) {
+      return "bg-success";
+    }
+
+    if (teachers.includes(user_id)) {
+      return "bg-warning";
+    }
+
+    return "bg-info";
+  }
+
   return (
     <>
       <div
-        className={`card my-2 ${is_correct ? "border-success" : "border-info"}`}
+        className={`card my-2 ${
+          is_correct ? "border-success" : setAnswerBorder()
+        }`}
       >
         <div
-          className={`d-flex flex-row ${is_correct ? "bg-success" : "bg-info"}`}
+          className={`d-flex flex-row ${
+            is_correct ? "bg-success" : setAnswerBackground()
+          }`}
         >
           <div className="mx-1">
             Od:
-            <span className="mx-1">{name}</span>
+            <span className="mx-1">
+              {name}
+              {teachers.includes(user_id) && " (Učiteľ)"}
+            </span>
             <br />
             Dátum: {formatedDate}
           </div>
 
-          <div className="h2 flex-fill text-end m-1">{upvoteCount}</div>
+          <div className="h2 flex-fill text-end m-1">
+            {!teachers.includes(user_id) && upvoteCount}
+          </div>
           {(loggedUser || question_open) && (
             <div role="button" className="h2 m-1">
               {showUpvoteButton() && (

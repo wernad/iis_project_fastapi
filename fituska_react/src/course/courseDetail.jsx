@@ -73,12 +73,12 @@ const CourseDetail = ({ loggedUser }) => {
       );
 
       const data = await response.json();
-
-      let new_questions = questions.slice();
+      console.log(data);
+      /*let new_questions = questions.slice();
       new_questions.push(data);
-      setQuestions(new_questions);
+      setQuestions(new_questions);*/
     } catch (e) {
-      console.log("error:" + e);
+      console.log("error: " + e);
     }
   };
 

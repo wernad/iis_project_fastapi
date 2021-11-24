@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
 
 import MyCourses from "../management/myCourses";
 
@@ -21,7 +20,7 @@ const Profile = ({ loggedUser }) => {
           "http://localhost:8000/profile/" + loggedUser,
           requestOptions
         );
-
+        console.log(response);
         const data = await response.json();
         setUser(data);
         setLoaded(true);
@@ -35,14 +34,11 @@ const Profile = ({ loggedUser }) => {
       console.log("cleaned up");
     };
   }, []);
-
   if (loaded && !loggedUser) {
-    return <Navigate to="/" />;
+    window.location.href = "/login";
   }
-
   return (
     <>
-      {!loggedUser && <Navigate to="/login" />}
       {loaded && loggedUser ? (
         <>
           <div className="col-md-5 my-1 mx-auto p-1">
