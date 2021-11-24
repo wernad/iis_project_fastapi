@@ -15,6 +15,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 origins = [
+    "http://localhost",
     "http://localhost:3000",
     "http://localhost:3000/course", 
     "http://localhost:3000/question",
@@ -78,7 +79,7 @@ async def check_if_logged_in(tokenData: schemas.Token, db: Session = Depends(get
     if not tokenData:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in. Please log in.")
     user_id = auth.decode_token(tokenData.access_token)
-    return  user_id
+    return user_id
 
 @app.post("/addquestion")
 async def create_question(form_data: schemas.QuestionCreate, db: Session = Depends(get_db)):

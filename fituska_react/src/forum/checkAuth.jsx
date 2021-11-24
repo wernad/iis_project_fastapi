@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Cookie from "universal-cookie";
+import Cookies from "universal-cookie";
 
 import Top from "../forum/top";
 import Login from "../user/login";
@@ -15,7 +15,7 @@ const CheckAuth = () => {
   const [loggedUser, setLoggedUser] = useState(null);
   const [loaded, setLoaded] = useState(false);
   const [errors, setErrors] = useState({});
-  const cookies = new Cookie();
+  const cookies = new Cookies();
   const access_token = cookies.get("access_token");
   const token_type = cookies.get("token_type");
 

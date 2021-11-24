@@ -104,7 +104,6 @@ const CourseDetail = ({ loggedUser }) => {
 
       let new_courseUsers = courseUsers.slice();
       new_courseUsers.push(data);
-      console.log(new_courseUsers, courseUsers);
       setCourseUsers(new_courseUsers);
     } catch (e) {
       console.log("error:" + e);

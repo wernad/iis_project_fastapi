@@ -29,6 +29,7 @@ const TopCourseTotal = ({ course_id, course_name }) => {
     }
     getTopUsers();
   }, [loaded]);
+
   return (
     <>
       {loaded && (

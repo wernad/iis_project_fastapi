@@ -17,6 +17,7 @@ const AnswerEntry = ({
   upvotes,
   totalUpvotes,
   question_open,
+  showCloseQuestion,
 }) => {
   const [upvoteCount, setUpvoteCount] = useState(upvotes.length);
   const formatedDate = new Date(date).toLocaleString();
@@ -148,6 +149,7 @@ const AnswerEntry = ({
             <br />
             Dátum: {formatedDate}
           </div>
+
           <div className="h2 flex-fill text-end m-1">{upvoteCount}</div>
           {(loggedUser || question_open) && (
             <div role="button" className="h2 m-1">
@@ -166,7 +168,8 @@ const AnswerEntry = ({
         <div>{description}</div>
       </div>
       <div className="container">
-        {reactions &&
+        {!showCloseQuestion &&
+          reactions &&
           reactions.map((reaction, key) => {
             return (
               <div key={key}>

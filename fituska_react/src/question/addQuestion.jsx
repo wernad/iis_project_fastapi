@@ -90,6 +90,7 @@ const AddQuestion = ({
                   Vytvoriť
                 </button>
                 <button
+                  type="button"
                   className="btn btn-danger form-control my-1"
                   onClick={toggleShow}
                 >
