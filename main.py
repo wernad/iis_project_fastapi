@@ -194,6 +194,12 @@ async def get_courses_with_upvotes_only(db: Session = Depends(get_db)):
 
     return courses
 
+@app.get("/unapprovedcourses")
+async def get_unapproved_courses(db: Session = Depends(get_db)):
+    courses = crud.get_unapproved_courses(db)
+
+    return courses
+
 @app.get("/topusers")
 async def get_top_users(db: Session = Depends(get_db)):
     top_users = crud.get_users_with_upvotes(db)

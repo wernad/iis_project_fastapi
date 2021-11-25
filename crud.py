@@ -98,6 +98,13 @@ def get_courses_with_upvotes_only(db: Session):
         ).with_entities(models.Course.id, models.Course.name).subquery()
     return db.query(subq).group_by(subq.c.id).all()
 
+def get_unapproved_courses(db: Session):
+    return db.query(
+        models.Course, models.User, models.UserCourse
+        ).filter(models.Course.is_approved == False
+        ).filter(models.Course.id == models.UserCourse.course_id
+        ).filter(models.UserCourse.user_id == models.User.id).all()
+
 def create_course(db: Session, course: schemas.CourseCreate):
     new_course = models.Course(
         name=course.name,
