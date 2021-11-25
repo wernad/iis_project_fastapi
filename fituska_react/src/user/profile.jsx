@@ -20,7 +20,7 @@ const Profile = ({ loggedUser }) => {
           "http://localhost:8000/profile/" + loggedUser,
           requestOptions
         );
-        console.log(response);
+
         const data = await response.json();
         setUser(data);
         setLoaded(true);

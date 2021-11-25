@@ -65,6 +65,9 @@ def get_categories(db: Session, skip: int = 0, limit: int = 100):
 def get_course_by_id(db: Session, course_id):
     return db.query(models.Course).filter(models.Course.id == course_id).first()
 
+def get_course_by_name(db: Session, course_name):
+    return db.query(models.Course).filter(func.lower(models.Course.name) == func.lower(course_name)).first()
+
 def get_approved_courses(db: Session):
     return db.query(models.Course).filter(models.Course.is_approved == True).all()
 
@@ -81,7 +84,7 @@ def get_courses_with_upvotes_only(db: Session):
 def create_course(db: Session, course: schemas.CourseCreate):
     new_course = models.Course(
         name=course.name,
-        is_approved=false
+        is_approved=False
     )
     db.add(new_course)
     db.commit()
@@ -218,12 +221,12 @@ def get_usercourse_by_course_not_approved_only(db: Session, course_id: int):
 def get_upvotes(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.UserCourse).offset(skip).limit(limit).all()
 
-def create_usercourse(db: Session, form_data: schemas.UserCourseCreate):
+def create_usercourse(db: Session, form_data: schemas.UserCourseCreate, is_teacher=False):
     new_userCourse = models.UserCourse(
         user_id=form_data.user_id,
         course_id=form_data.course_id,
         is_approved=False,
-        is_teacher=False
+        is_teacher=is_teacher
     )
     db.add(new_userCourse)
     db.commit()

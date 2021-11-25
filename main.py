@@ -76,7 +76,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
 @app.post("/checkauth", response_model=schemas.TokenOwner)
 async def check_if_logged_in(tokenData: schemas.Token, db: Session = Depends(get_db)):
     if not tokenData:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in. Please log in.")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Chybný alebo chýbajúci token.")
     user_id = auth.decode_token(tokenData.access_token)
     return user_id
 
@@ -105,7 +105,17 @@ async def create_upvote(form_data: schemas.UpvoteCreate, db: Session = Depends(g
 
 @app.post("/addcourse")
 async def create_course(form_data: schemas.CourseCreate, db: Session = Depends(get_db)):
-    return crud.create_course(db, form_data)
+    course = crud.get_course_by_name(db, form_data.name)
+    if course:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Kurz s týmto názvom už existuje.",
+        )
+    course = crud.create_course(db, form_data)
+    new_usercourse = schemas.UserCourseCreate(user_id=form_data.user_id, course_id=course.id)
+    userCourse = crud.create_usercourse(db, new_usercourse, True)
+
+    return userCourse
 
 @app.post("/coursesignup")
 async def apply_to_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db)):

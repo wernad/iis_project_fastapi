@@ -160,6 +160,7 @@ class CourseBase(BaseModel):
 
 class CourseCreate(BaseModel):
     name: str
+    user_id: int
     pass
 
 class Course(CourseBase):
