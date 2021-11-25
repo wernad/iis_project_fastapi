@@ -79,7 +79,7 @@ const Courses = ({ loggedUser }) => {
             className="btn btn-primary my-2"
             onClick={() => setShowAddCourse(!showAddCourse)}
           >
-            Pridať otázku
+            Pridať kurz
           </button>
         </div>
       )}

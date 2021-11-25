@@ -8,12 +8,18 @@ const AddQuestion = ({
 }) => {
   const [questionText, setQuestionText] = useState("");
   const [questionTitle, setQuestionTitle] = useState("");
+  const [questionCategory, setQuestionCategory] = useState("");
+
   function updateQuestionText(e) {
     setQuestionText(e.target.value);
   }
 
   function updateQuestionTitle(e) {
     setQuestionTitle(e.target.value);
+  }
+
+  function updateQuestionCategory(e) {
+    setQuestionCategory(e.target.value);
   }
 
   return (
@@ -27,6 +33,7 @@ const AddQuestion = ({
                   name="questionCategory"
                   defaultValue=""
                   className="mx-auto text-center"
+                  onChange={(e) => updateQuestionCategory(e)}
                 >
                   <option value="" disabled={true}>
                     Vyberte kategóriu
@@ -40,6 +47,13 @@ const AddQuestion = ({
                       );
                     })}
                 </select>
+                {questionCategory.trim().length > 0 ? (
+                  ""
+                ) : (
+                  <span className="h6 text-danger">
+                    *Kategória otázky nesmie byť prázdna.
+                  </span>
+                )}
               </div>
               <div className="form-group">
                 <label htmlFor="questionTitle">Text odpovede:*</label>
@@ -80,7 +94,8 @@ const AddQuestion = ({
                 <button
                   disabled={
                     questionText.trim().length > 0 &&
-                    questionTitle.trim().length > 0
+                    questionTitle.trim().length > 0 &&
+                    questionCategory.trim().length > 0
                       ? false
                       : true
                   }

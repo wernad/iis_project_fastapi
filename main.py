@@ -103,6 +103,10 @@ async def create_reaction(form_data: schemas.ReactionCreate, db: Session = Depen
 async def create_upvote(form_data: schemas.UpvoteCreate, db: Session = Depends(get_db)):
     return crud.create_upvote(db, form_data)
 
+@app.post("/addcategory")
+async def create_category(form_data: schemas.CategoryCreate, db: Session = Depends(get_db)):
+    return crud.create_category(db, form_data)
+
 @app.post("/addcourse")
 async def create_course(form_data: schemas.CourseCreate, db: Session = Depends(get_db)):
     course = crud.get_course_by_name(db, form_data.name)
@@ -119,9 +123,8 @@ async def create_course(form_data: schemas.CourseCreate, db: Session = Depends(g
 
 @app.post("/coursesignup")
 async def apply_to_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db)):
-    return crud.create_usercourse(db, form_data)
-    
-#TODO
+    return crud.create_usercourse(db, form_data)    
+
 @app.put("/closequestion")
 async def close_question(form_data: schemas.QuestionClose, db: Session = Depends(get_db)):
     correct_answers_ids = form_data.correct_answers
@@ -167,6 +170,24 @@ async def close_question(form_data: schemas.QuestionClose, db: Session = Depends
 
     return closed_question
 
+@app.put("/updatecategory")
+async def update_category(form_data: schemas.CategoryUpdate, db: Session = Depends(get_db)):
+    category = crud.get_category_by_id(db, form_data.id)
+
+    if not category:
+        raise HTTPException(
+            status_code=status.HTTP_404_,
+            detail="Kategória neexistuje",
+        )
+    category = crud.update_category(db, category, form_data.name)
+    return category
+
+@app.put("/updateusercourse")
+async def update_usercourse(form_data: schemas.UserCourseUpdate, db: Session = Depends(get_db)):
+    usercourse = crud.get_usercourse_by_course_user(db, form_data.user_id, form_data.course_id)
+    usercourse = crud.update_usercourse(db, usercourse)
+    return usercourse
+
 @app.get("/courseswithupvotes")
 async def get_courses_with_upvotes_only(db: Session = Depends(get_db)):
     courses= crud.get_courses_with_upvotes_only(db)
@@ -185,7 +206,7 @@ async def get_top_users_in_course(course_id, db: Session = Depends(get_db)):
 
     return top_users
 
-@app.get("/profile/{user_id}", response_model=schemas.User)
+@app.get("/profile/{user_id}", response_model=schemas.UserWithManagement)
 async def get_profile(user_id, db: Session = Depends(get_db)):
     user = crud.get_user_by_id(db, user_id)
 

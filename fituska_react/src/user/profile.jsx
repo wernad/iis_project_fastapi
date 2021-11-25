@@ -55,8 +55,20 @@ const Profile = ({ loggedUser }) => {
 
           <div className="col-md-5 my-1 mx-auto p-1">
             <h2 className="mx-1">Moje kurzy</h2>
-            <MyCourses loggedUser={loggedUser} />
+            <div className="card">
+              <MyCourses loggedUser={loggedUser} />
+            </div>
           </div>
+          {(user.management_level === 0 || user.management_level === 1) && (
+            <div className="col-md-5 my-1 mx-auto p-1">
+              <h2 className="mx-1">Schválenie kurzov</h2>
+            </div>
+          )}
+          {user.management_level === 1 && (
+            <div className="col-md-5 my-1 mx-auto p-1">
+              <h2 className="mx-1">Správa užívateľov</h2>
+            </div>
+          )}
         </>
       ) : (
         <p>Načítavanie...</p>

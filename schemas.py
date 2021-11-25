@@ -102,15 +102,15 @@ class Question(QuestionBase):
 class UserCourseBase(BaseModel):
     is_teacher: bool
     is_approved: bool
-    
 
 class UserCourseCreate(BaseModel):
     user_id: int
     course_id: int
-    pass
+
+class UserCourseUpdate(UserCourseCreate):
+    is_approved: bool    
 
 class UserCourse(UserCourseBase):
-    
     course: Optional[Course] = None
 
     class Config:
@@ -122,6 +122,10 @@ class UserCourseUserId(UserCourseBase):
     class Config:
         orm_mode = True
 
+class UserCourseDetail(UserCourseBase):
+    user_id: int
+    course_id: int
+
 #Category
 class CategoryBase(BaseModel):
     name: str
@@ -130,7 +134,10 @@ class CategoryBase(BaseModel):
         orm_mode = True
 
 class CategoryCreate(CategoryBase):
-    pass
+    course_id: int
+
+class CategoryUpdate(CategoryBase):
+    id: int
 
 class Category(CategoryBase):
     id: int
@@ -203,6 +210,12 @@ class User(UserBase):
     class Config:
         orm_mode = True
 
+class UserWithManagement(User):
+    management_level: Optional[int]
+
+    class Config:
+        orm_mode = True
+        
 class UserMyCourses(BaseModel):
     courses: List[UserCourse] = []
     

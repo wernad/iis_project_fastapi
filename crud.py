@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session, descriptor_props
 from sqlalchemy.sql import schema
 from sqlalchemy.sql.elements import False_
 from sqlalchemy.sql.expression import false
+from sqlalchemy.sql.functions import user
 
 import models, schemas
 
@@ -60,6 +61,22 @@ def get_categories_by_course(db: Session, course_id: int):
 
 def get_categories(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Category).offset(skip).limit(limit).all()
+
+def create_category(db: Session, category: schemas.CategoryCreate):
+    new_category = models.Category(
+        name=category.name,
+        course_id=category.course_id
+    )
+    db.add(new_category)
+    db.commit()
+    db.refresh(new_category)
+    return new_category
+
+def update_category(db: Session, category: schemas.CategoryUpdate, name: str):
+    category.name = name
+    db.commit()
+    db.refresh(category)
+    return category
 
 #Course
 def get_course_by_id(db: Session, course_id):
@@ -124,7 +141,6 @@ def create_question(db: Session, question: schemas.QuestionCreate):
     return question
 
 def close_question(db: Session, question: schemas.Question):
-    print(question)
     question.is_open = False
     db.commit()
     return question
@@ -215,11 +231,21 @@ def get_usercourse_by_user(db: Session, user_id: int):
 def get_usercourse_by_course(db: Session, course_id: int):
     return db.query(models.UserCourse).filter(models.UserCourse.course_id == course_id).all()
 
+def get_usercourse_by_course_user(db: Session, user_id: int, course_id: int):
+    return db.query(models.UserCourse).filter(models.UserCourse.user_id == user_id).filter(models.UserCourse.course_id == course_id).first()
+
 def get_usercourse_by_course_not_approved_only(db: Session, course_id: int):
     return db.query(models.UserCourse).filter(models.UserCourse.course_id == course_id, models.UserCourse.is_approved == False).all()
 
 def get_upvotes(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.UserCourse).offset(skip).limit(limit).all()
+
+def approve_usercourse(db: Session, usercourse: schemas.UserCourseDetail):
+    usercourse.is_approved = True
+    db.commit()
+    db.refresh(usercourse)
+
+    return usercourse
 
 def create_usercourse(db: Session, form_data: schemas.UserCourseCreate, is_teacher=False):
     new_userCourse = models.UserCourse(
