@@ -253,7 +253,7 @@
       "user_id": 4,
       "course_id": 2,
       "is_teacher": true,
-      "is_approved": true
+      "is_approved": false
     },
     {
       "user_id": 5,
