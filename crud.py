@@ -45,12 +45,17 @@ def create_user(db: Session, user: schemas.UserCreate):
         last_name= user.last_name,
         email= user.email,
         password= user.password,
-        active= True
+        is_active= True
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     return new_user
+
+def update_user(db: Session, new_data: schemas.UserUpdate):
+    db.query(models.User).filter(models.User.id == new_data.id).update(dict(new_data))
+    db.commit()
+    return db.query(models.User).filter(models.User.id == new_data.id).first()
 
 #Category
 def get_category_by_id(db: Session, category_id: int):
@@ -114,6 +119,11 @@ def create_course(db: Session, course: schemas.CourseCreate):
     db.commit()
     db.refresh(new_course)
     return new_course
+
+def approve_course(db: Session, course: schemas.CourseBase):
+    course.is_approved = True
+    db.flush()
+    return course
 
 #Question
 def get_question_by_id(db: Session, question_id: int):
@@ -237,6 +247,9 @@ def get_usercourse_by_user(db: Session, user_id: int):
 
 def get_usercourse_by_course(db: Session, course_id: int):
     return db.query(models.UserCourse).filter(models.UserCourse.course_id == course_id).all()
+
+def get_usercourse_by_course_single_user(db: Session, course_id: int):
+    return db.query(models.UserCourse).filter(models.UserCourse.course_id == course_id).first()
 
 def get_usercourse_by_course_user(db: Session, user_id: int, course_id: int):
     return db.query(models.UserCourse).filter(models.UserCourse.user_id == user_id).filter(models.UserCourse.course_id == course_id).first()

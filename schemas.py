@@ -16,7 +16,6 @@ CourseUsers = ForwardRef('CourseUsers')
 #Token
 class Token(BaseModel):
     access_token: str
-    token_type: str
 
 class TokenOwner(BaseModel):
     id: Optional[int]
@@ -107,9 +106,6 @@ class UserCourseCreate(BaseModel):
     user_id: int
     course_id: int
 
-class UserCourseUpdate(UserCourseCreate):
-    is_approved: bool    
-
 class UserCourse(UserCourseBase):
     course: Optional[Course] = None
 
@@ -168,7 +164,6 @@ class CourseBase(BaseModel):
 class CourseCreate(BaseModel):
     name: str
     user_id: int
-    pass
 
 class Course(CourseBase):
     id: int
@@ -209,6 +204,15 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+class UserUpdate(BaseModel):
+    id: int
+    first_name: Optional[str]
+    last_name: Optional[str]
+    email: Optional[str]
+    password: Optional[str]
+    is_active: Optional[bool]
+    management_level: Optional[int]
 
 class UserWithManagement(User):
     management_level: Optional[int]

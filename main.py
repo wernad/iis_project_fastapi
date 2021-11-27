@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import Depends, FastAPI, HTTPException, status, Cookie
 from fastapi.encoders import jsonable_encoder
 import json
@@ -52,13 +54,13 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Užívateľ neexistuje",
+            detail="Užívateľ neexistuje.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    if not user.active:
+    if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Užívateľ neexistuje",
+            detail="Užívateľ neexistuje.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -70,15 +72,15 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
         )
 
     token = auth.encode_token(user.id)
-    return {"access_token": token, "token_type": "bearer"}
+    return {"access_token": token}
 
-
+#Checks if user token is still valid, returns id of user.
 @app.post("/checkauth", response_model=schemas.TokenOwner)
-async def check_if_logged_in(tokenData: schemas.Token, db: Session = Depends(get_db)):
-    if not tokenData:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Chybný alebo chýbajúci token.")
-    user_id = auth.decode_token(tokenData.access_token)
-    return user_id
+async def check_if_logged_in(access_token: Optional[str] = Cookie(default=None)):
+    if not access_token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Autorizačný token neexistuje")
+    user_id = auth.decode_token(access_token)
+    return {"user_id": user_id}
 
 @app.post("/addquestion")
 async def create_question(form_data: schemas.QuestionCreate, db: Session = Depends(get_db)):
@@ -176,17 +178,47 @@ async def update_category(form_data: schemas.CategoryUpdate, db: Session = Depen
 
     if not category:
         raise HTTPException(
-            status_code=status.HTTP_404_,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="Kategória neexistuje",
         )
     category = crud.update_category(db, category, form_data.name)
     return category
 
+@app.put("/approvecourse")
+async def approve_course(course_id: int, db: Session = Depends(get_db)):
+    course = crud.get_course_by_id(db, course_id)
+    if not course:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Kurz neexistuje",
+        )
+    
+    course = crud.approve_course(db, course)
+
+    usercourse = crud.get_usercourse_by_course_single_user(db, course_id)
+    if not usercourse:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Tento kurz nemá pridaných žiadnych užívateľov.",
+        )
+
+    usercourse = crud.approve_usercourse(db, usercourse)
+    db.commit()
+    return course
+
 @app.put("/updateusercourse")
-async def update_usercourse(form_data: schemas.UserCourseUpdate, db: Session = Depends(get_db)):
+async def approve_usercourse(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db)):
     usercourse = crud.get_usercourse_by_course_user(db, form_data.user_id, form_data.course_id)
-    usercourse = crud.update_usercourse(db, usercourse)
+    usercourse = crud.approve_usercourse(db, usercourse)
     return usercourse
+
+@app.put("/updateuser")
+async def update_user(form_data: schemas.UserUpdate, db: Session = Depends(get_db)):    
+    if form_data.password:
+        form_data.password = auth.get_password_hash(form_data.password)
+
+    user = crud.update_user(db, form_data)
+    return user
 
 @app.get("/courseswithupvotes")
 async def get_courses_with_upvotes_only(db: Session = Depends(get_db)):
