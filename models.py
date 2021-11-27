@@ -13,9 +13,9 @@ class User(Base):
     email = Column(String(50), unique=True, index=True, nullable=False)
     password = Column(String(100))
 
-    management_level = Column(Integer, nullable=True)
+    management_level = Column(Integer)
 
-    active = Column(Boolean)
+    is_active = Column(Boolean)
 
     questions = relationship('Question', back_populates='user')
     answers = relationship('Answer', back_populates='user')
