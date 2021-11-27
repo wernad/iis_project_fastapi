@@ -106,7 +106,7 @@ const MyCourses = ({ loggedUser }) => {
       setShowCategories(id);
     }
   }
-
+  
   return (
     <>
       {loaded && (
@@ -143,7 +143,7 @@ const MyCourses = ({ loggedUser }) => {
                               <Link to={`/course/${course.course.id}`}>
                                 {course.course.name}
                               </Link>
-                              {!course.is_approved && " Čaká sa na schválenie."}
+                              {!course.course.is_approved && " Čaká sa na schválenie."}
                             </div>
                           </div>
                         </>

@@ -25,9 +25,11 @@ const AddQuestion = ({
   return (
     <>
       {showAddQuestion && (
+        
         <>
           <div>
             <form onSubmit={(e) => addQuestion(e)} className="col-md-5 mx-auto">
+            {categories.length === 0 && <div className="h4 bg-warning">Kurz nemá žiadne kategórie. Otázky bude možné pridať až vyučujúci pridá kategórie.</div>} 
               <div className="form-group">
                 <select
                   name="questionCategory"
