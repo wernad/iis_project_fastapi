@@ -203,6 +203,7 @@ const CourseDetail = ({ loggedUser }) => {
                 ></input>
               </div>
               <table className="table table-striped">
+              {questions.length == 0 && <div className="bg-warning">Kurz ešte nemá otázky.</div>}
                 <tbody>
                   <tr>
                     <th>Stav</th>
@@ -210,6 +211,7 @@ const CourseDetail = ({ loggedUser }) => {
                     <th>Kategória</th>
                     <th>Dátum</th>
                   </tr>
+                  
                   {questions &&
                     questions.map((question, key) => {
                       return (
