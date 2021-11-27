@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import MyCourses from "../management/myCourses";
+import MyCourses from "../management/mycourses";
 import CourseApproval from "../management/courseapproval";
 
 const Profile = ({ loggedUser }) => {
@@ -68,7 +68,7 @@ const Profile = ({ loggedUser }) => {
               </div>
             </div>
           )}
-          {user.management_level === 1 && (
+          {user.management_level === 0 && (
             <div className="col-md-5 my-1 mx-auto p-1">
               <h2 className="mx-1">Správa užívateľov</h2>
             </div>
