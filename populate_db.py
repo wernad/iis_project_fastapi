@@ -21,7 +21,7 @@ for user in file['users']:
         email = user['email'],
         password= get_password_hash(user['password']),
         management_level = user['management_level'],
-        active = user['active']
+        is_active = user['is_active']
     )
     db.add(new_user)
 
