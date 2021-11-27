@@ -18,18 +18,17 @@ const CheckAuth = () => {
   const cookies = new Cookies();
 
   const access_token = cookies.get("access_token");
-  const token_type = cookies.get("token_type");
 
   useEffect(() => {
     async function checkLoginStatus() {
       const requestOptions = {
         method: "POST",
         headers: {
+          "credentials": "include",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           access_token: access_token,
-          token_type: token_type,
         }),
       };
 
@@ -40,7 +39,7 @@ const CheckAuth = () => {
         );
 
         const data = await response.json();
-
+        console.log(data)
         setLoggedUser(data.id);
         setLoaded(true);
       } catch (e) {
