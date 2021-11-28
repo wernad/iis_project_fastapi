@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from typing import Optional
 
-from fastapi import Depends, HTTPException, status, Request
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, status, Request, Security
+from fastapi.security import OAuth2PasswordBearer, HTTPAuthorizationCredentials, HTTPBearer
 import jwt
 from passlib.context import CryptContext
 
@@ -13,6 +13,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+security = HTTPBearer()
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -35,9 +37,8 @@ def decode_token(token):
         return {"id": decoded_token['sub']}
     except jwt.ExpiredSignatureError:
             raise HTTPException(status_code=401, detail='Token už expiroval. Prihláste sa znovu prosím.')
-    except jwt.InvalidTokenError as e:
+    except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail='Nesprávny token ')
 
-def auth_request(request: Request):
-    access_token = request.cookies.get("access_token")
-    return access_token
+def auth_request(auth: HTTPAuthorizationCredentials = Security(security)):
+    return decode_token(auth.credentials)
