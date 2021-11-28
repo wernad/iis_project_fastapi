@@ -87,7 +87,7 @@ const Login = ({ loggedUser }) => {
               <Form className="needs-validation">
                 {errors && <div className="h6 text-danger">{errors}</div>}
                 <div className="form-group">
-                  <MyTextInput label="Email:*" name="email" type="text" />
+                  <MyTextInput label="Email:*" name="email" type="text" placeholder="name@mail.com"/>
                 </div>
                 <div className="form-group">
                   <MyTextInput

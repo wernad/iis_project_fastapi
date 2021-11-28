@@ -100,7 +100,7 @@ const Register = ({ loggedUser }) => {
                   />
                 </div>
                 <div className="form-group">
-                  <MyTextInput label="Email:*" name="email" type="text" />
+                  <MyTextInput label="Email:*" name="email" type="text" placeholder="name@mail.com" />
                 </div>
                 <div className="form-group">
                   <MyTextInput
