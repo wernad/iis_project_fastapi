@@ -97,7 +97,7 @@ const UserApproval = () => {
         }
   }
     return (
-    <>{loaded &&
+    <>{loaded ?
     <div>
     <table className="table">
                 <tbody>
@@ -124,7 +124,7 @@ const UserApproval = () => {
         </tbody>
               </table>
               {unapprovedUsers.length === 0 && <div>Žiadny študent nečaká na schválenie.</div>}
-        </div>}
+        </div> : "Načitávanie..."}
         </>
         )
 }

@@ -12,13 +12,22 @@ def get_user_by_id(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 def get_user_role(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.id == user_id).with_entities(models.User.management_level).first()
+    return db.query(models.User
+    ).filter(models.User.id == user_id
+    ).filter(models.User.is_active == True
+    ).with_entities(models.User.management_level).first()
 
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
 def get_users(db: Session):
     return db.query(models.User).all()
+
+def get_user_by_id_is_active(db: Session, user_id: int):
+    return db.query(models.User
+    ).filter(models.User.id == user_id
+    ).filter(models.User.is_active == True
+    ).first()
 
 def get_users_with_upvotes(db: Session):
     subq =  db.query(models.User, models.Upvote,  models.Answer, models.Question
@@ -42,13 +51,28 @@ def get_users_with_upvotes_by_course(db: Session, course_id):
         ).with_entities(models.User.first_name, models.User.last_name, models.User.email, models.Course.name).subquery()
     return db.query(subq, func.count(subq.c.email).label("votes")).group_by(subq.c.email, subq.c.name).order_by(desc("votes")).all()
 
-def create_user(db: Session, user: schemas.UserCreate):
+def create_user_register(db: Session, user: schemas.UserCreate):
     new_user = models.User(
         first_name= user.first_name,
         last_name= user.last_name,
         email= user.email,
         password= user.password,
-        is_active= True
+        is_active= True,
+        management_level= 2
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+
+def create_user(db: Session, user: schemas.UserCreateAllData):
+    new_user = models.User(
+        first_name= user.first_name,
+        last_name= user.last_name,
+        email= user.email,
+        password= user.password,
+        is_active= True,
+        management_level= user.management_level
     )
     db.add(new_user)
     db.commit()

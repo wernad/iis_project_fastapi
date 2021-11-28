@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from fastapi import Depends, FastAPI, HTTPException, status, Cookie
 from fastapi.encoders import jsonable_encoder
@@ -40,13 +40,27 @@ def get_db():
     finally:
         db.close()
 
+def check_user_is_active(user: int = Depends(auth.auth_request), db: Session = Depends(get_db)):
+    new_user = crud.get_user_by_id_is_active(db, user["id"])
+    if not new_user:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Tento účet nie je aktívny.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
 @app.post("/register", status_code=201) 
 async def register(form_data: schemas.UserCreate, db: Session = Depends(get_db)):
     user = crud.get_user_by_email(db, form_data.email)
     if user:
-        raise HTTPException(status_code=400, detail="Tento email už existuje.")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Tento email je zabraný.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     form_data.password = auth.get_password_hash(form_data.password)
-    return crud.create_user(db, form_data)
+    return crud.create_user_register(db, form_data)
 
 @app.post("/token", response_model=schemas.Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
@@ -54,13 +68,13 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Užívateľ neexistuje.",
+            detail="Užívateľ s týmto emailom neexistuje.",
             headers={"WWW-Authenticate": "Bearer"},
         )
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Užívateľ neexistuje.",
+            detail="Tento účet nie je aktívny.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -74,17 +88,29 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     token = auth.encode_token(user.id)
     return {"access_token": token}
 
-#Checks if user token is still valid, returns id of user.
 @app.post("/checkauth", response_model=schemas.TokenOwner)
-async def check_if_logged_in(user: int = Depends(auth.auth_request)):
+async def check_if_logged_in(user: int = Depends(check_user_is_active)):
     return user
 
+@app.post("/adduser")
+async def create_user(form_data: schemas.UserCreateAllData, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
+    user = crud.get_user_by_email(db, form_data.email)
+    if user:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Tento email je zabraný.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    form_data.password = auth.get_password_hash(form_data.password)  
+    return crud.create_user(db, form_data)
+
 @app.post("/addquestion")
-async def create_question(form_data: schemas.QuestionCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def create_question(form_data: schemas.QuestionCreate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     return crud.create_question(db, form_data)
 
 @app.post("/addanswer")
-async def create_answer(form_data: schemas.AnswerCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def create_answer(form_data: schemas.AnswerCreate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     answer = crud.get_answer_by_question_and_user(db, form_data.question_id, form_data.user_id)
     if answer:
         raise HTTPException(
@@ -95,15 +121,15 @@ async def create_answer(form_data: schemas.AnswerCreate, db: Session = Depends(g
     return crud.create_answer(db, form_data)
 
 @app.post("/addreaction")
-async def create_reaction(form_data: schemas.ReactionCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def create_reaction(form_data: schemas.ReactionCreate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     return crud.create_reaction(db, form_data)
 
 @app.post("/addupvote")
-async def create_upvote(form_data: schemas.UpvoteCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def create_upvote(form_data: schemas.UpvoteCreate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     return crud.create_upvote(db, form_data)
 
 @app.post("/addcategory", status_code=201)
-async def create_category(form_data: schemas.CategoryCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def create_category(form_data: schemas.CategoryCreate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     category = crud.get_category_by_name_course(db, form_data.name, form_data.course_id)
     if category:
         raise HTTPException(
@@ -113,7 +139,7 @@ async def create_category(form_data: schemas.CategoryCreate, db: Session = Depen
     return crud.create_category(db, form_data)
 
 @app.post("/addcourse")
-async def create_course(form_data: schemas.CourseCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def create_course(form_data: schemas.CourseCreate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     course = crud.get_course_by_name(db, form_data.name)
     if course:
         raise HTTPException(
@@ -127,15 +153,15 @@ async def create_course(form_data: schemas.CourseCreate, db: Session = Depends(g
     return userCourse
 
 @app.post("/coursesignup")
-async def apply_to_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def apply_to_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     return crud.create_usercourse(db, form_data)    
 
 @app.delete("/rejectusercourse")
-async def reject_usercourse(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def reject_usercourse(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     return crud.delete_usercourse(db, form_data.user_id, form_data.course_id)
 
 @app.delete("/rejectcourse")
-async def reject_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def reject_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     role = crud.get_user_role(db, user["id"])
     if role == 2:
         raise HTTPException(
@@ -150,7 +176,7 @@ async def reject_course(form_data: schemas.UserCourseCreate, db: Session = Depen
     return crud.delete_course(db, form_data.course_id)
 
 @app.put("/closequestion")
-async def close_question(form_data: schemas.QuestionClose, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def close_question(form_data: schemas.QuestionClose, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     correct_answers_ids = form_data.correct_answers
     upvoted_answers_ids = form_data.upvoted_answers
     final_answer = form_data.final_answer
@@ -195,7 +221,7 @@ async def close_question(form_data: schemas.QuestionClose, db: Session = Depends
     return closed_question
 
 @app.put("/updatecategory")
-async def update_category(form_data: schemas.CategoryUpdate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def update_category(form_data: schemas.CategoryUpdate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     category = crud.get_category_by_id(db, form_data.id)
 
     if not category:
@@ -214,7 +240,7 @@ async def update_category(form_data: schemas.CategoryUpdate, db: Session = Depen
     return category
 
 @app.put("/approvecourse")
-async def approve_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def approve_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     role = crud.get_user_role(db, user["id"])
     if role == 2:
         raise HTTPException(
@@ -243,33 +269,44 @@ async def approve_course(form_data: schemas.UserCourseCreate, db: Session = Depe
     return course
 
 @app.put("/approveusercourse")
-async def approve_usercourse(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def approve_usercourse(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     usercourse = crud.get_usercourse_by_course_user(db, form_data.user_id, form_data.course_id)
     usercourse = crud.approve_usercourse(db, usercourse)
     return usercourse
 
 @app.put("/updateuser")
-async def update_user(form_data: schemas.UserUpdate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):    
+async def update_user(form_data: schemas.UserUpdate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
+    if crud.get_user_by_email(db, form_data.email).id != form_data.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Email je zabraný.",
+        )
+
     if form_data.password:
         form_data.password = auth.get_password_hash(form_data.password)
+    form_data.dict(exclude_unset=True)
 
     user = crud.update_user(db, form_data)
     return user
 
 @app.get("/courseswithupvotes")
 async def get_courses_with_upvotes_only(db: Session = Depends(get_db)):
-    courses= crud.get_courses_with_upvotes_only(db)
-
-    return courses
+    return crud.get_courses_with_upvotes_only(db)
 
 @app.get("/unapprovedcourses")
-async def get_unapproved_courses(db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def get_unapproved_courses(db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
+    role = crud.get_user_role(db, user["id"])
+    if role == 2:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Pre túto akciu nemáte dostatočné oprávnenie.",
+        )
     courses = crud.get_unapproved_courses(db)
 
     return courses
 
 @app.get("/unapprovedusers")
-async def get_unapproved_courses(db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+async def get_unapproved_courses(db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     usercourses = crud.get_usercourses_as_teacher(db, user["id"])
 
     courses_ids = [usercourse.course_id for usercourse in usercourses]
@@ -278,29 +315,25 @@ async def get_unapproved_courses(db: Session = Depends(get_db), user: int = Depe
 
     return unapproved_courses
 
+@app.get("/users", response_model= List[schemas.UserWithoutPassword])
+async def get_users(db: Session = Depends(get_db)):
+    return crud.get_users(db)
 
 @app.get("/topusers")
-async def get_top_users(db: Session = Depends(get_db)):
-    top_users = crud.get_users_with_upvotes(db)
-
-    return top_users
+async def get_top_users(db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
+    return crud.get_users_with_upvotes(db)
 
 @app.get("/topuserscourse/{course_id}")
 async def get_top_users_in_course(course_id, db: Session = Depends(get_db)):
-    top_users = crud.get_users_with_upvotes_by_course(db, course_id)
-
-    return top_users
+    return crud.get_users_with_upvotes_by_course(db, course_id)
 
 @app.get("/profile/{user_id}", response_model=schemas.UserWithManagement)
-async def get_profile(user_id, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
-    user = crud.get_user_by_id(db, user_id)
-
-    return user
+async def get_profile(user_id, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
+    return crud.get_user_by_id(db, user_id)
 
 @app.get("/courses")
 async def get_courses(db: Session = Depends(get_db)):
-    courses = crud.get_approved_courses(db)
-    return courses
+    return crud.get_approved_courses(db)
 
 @app.get("/course/{course_id}", response_model=schemas.CourseDetail)
 async def get_course_detail(course_id, db: Session = Depends(get_db)):
@@ -314,10 +347,8 @@ async def get_course_detail(course_id, db: Session = Depends(get_db)):
     return course
 
 @app.get("/mycourses/{user_id}", response_model=schemas.UserMyCourses)
-async def get_my_courses(user_id, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
-    my_courses = crud.get_user_by_id(db, user_id)
-
-    return my_courses
+async def get_my_courses(user_id, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
+    return crud.get_user_by_id(db, user_id)
 
 @app.get("/question/{question_id}", response_model=schemas.Question)
 async def get_question_detail(question_id, db: Session = Depends(get_db)):

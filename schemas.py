@@ -208,13 +208,18 @@ class User(UserBase):
     class Config:
         orm_mode = True
 
-class UserUpdate(BaseModel):
+class UserUpdate(UserCreate):
     id: int
-    first_name: Optional[str]
-    last_name: Optional[str]
-    email: Optional[str]
-    password: Optional[str]
     is_active: Optional[bool]
+    management_level: Optional[int]
+    password: Optional[str]
+
+class UserWithoutPassword(UserBase):
+    id: int
+    is_active: bool
+    management_level: int
+
+class UserCreateAllData(UserCreate):
     management_level: Optional[int]
 
 class UserWithManagement(User):

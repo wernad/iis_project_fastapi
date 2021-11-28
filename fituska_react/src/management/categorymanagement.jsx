@@ -89,12 +89,12 @@ const CategoryManagement = ({teacherCourses}) => {
                         updateShowCategory(course.course.id)
                       }
                     >
-                      Zobraziť kategórie
+                      {showCategories !== course.course.id ? "Zobraziť kategórie" : "Skryť kategórie"}
                     </button>
                   )}
                 </div>
                 {showCategories === course.course.id && (
-                  <div className="container">
+                  <div className="container" key={key}>
                     {course.course.categories &&
                       course.course.categories.map(
                         (category, k) => {
