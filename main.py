@@ -73,7 +73,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
         )
     if not user.is_active:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="Tento účet nie je aktívny.",
             headers={"WWW-Authenticate": "Bearer"},
         )
@@ -316,11 +316,11 @@ async def get_unapproved_courses(db: Session = Depends(get_db), user: int = Depe
     return unapproved_courses
 
 @app.get("/users", response_model= List[schemas.UserWithoutPassword])
-async def get_users(db: Session = Depends(get_db)):
+async def get_users(db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
     return crud.get_users(db)
 
 @app.get("/topusers")
-async def get_top_users(db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
+async def get_top_users(db: Session = Depends(get_db)):
     return crud.get_users_with_upvotes(db)
 
 @app.get("/topuserscourse/{course_id}")
