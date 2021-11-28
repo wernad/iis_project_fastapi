@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Cookies from "universal-cookie";
 
 import MyCourses from "../management/mycourses";
 import CourseApproval from "../management/courseapproval";
@@ -7,12 +8,16 @@ const Profile = ({ loggedUser }) => {
   const [user, setUser] = useState({});
   const [loaded, setLoaded] = useState(false);
 
+  const cookies = new Cookies();
+    const access_token = cookies.get("access_token");
+
   useEffect(() => {
     async function fetchProfileData() {
       const requestOptions = {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": "Bearer " + access_token,
         },
       };
 
