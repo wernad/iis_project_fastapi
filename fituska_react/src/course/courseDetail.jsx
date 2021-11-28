@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import Cookies from "universal-cookie";
 
 import AddQuestion from "../question/addQuestion";
 
@@ -14,7 +15,8 @@ const CourseDetail = ({ loggedUser }) => {
   const [showAddQuestion, setShowAddQuestion] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const { id } = useParams();
-
+  const cookies = new Cookies();
+  const access_token = cookies.get("access_token");
   useEffect(() => {
     async function fetchCourseData() {
       const requestOptions = {
@@ -56,6 +58,7 @@ const CourseDetail = ({ loggedUser }) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": "Bearer " + access_token,
       },
       body: JSON.stringify({
         title: formData.get("questionTitle"),
@@ -88,6 +91,7 @@ const CourseDetail = ({ loggedUser }) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": "Bearer " + access_token,
       },
       body: JSON.stringify({
         course_id: id,
@@ -203,7 +207,6 @@ const CourseDetail = ({ loggedUser }) => {
                 ></input>
               </div>
               <table className="table table-striped">
-              {questions.length == 0 && <div className="bg-warning">Kurz ešte nemá otázky.</div>}
                 <tbody>
                   <tr>
                     <th>Stav</th>
@@ -220,9 +223,9 @@ const CourseDetail = ({ loggedUser }) => {
                             <tr key={key}>
                               <td>
                                 {question.is_open ? (
-                                  <span>[Open]</span>
+                                  <span>Otvorená</span>
                                 ) : (
-                                  <span>[Closed]</span>
+                                  <span>Uzatvorená</span>
                                 )}
                               </td>
                               <td>
@@ -241,12 +244,13 @@ const CourseDetail = ({ loggedUser }) => {
                     })}
                 </tbody>
               </table>
+              {questions.length == 0 && <div>Kurz ešte nemá otázky.</div>}
             </div>
           </div>
         </>
       ) : (
         <p className="d-flex justify-content-center m-3">
-          {statusCode ? "Kurz neexistuje." : "Načítavanie..."}
+          {statusCode ? "Kurz neexistuje alebo čaká na schválenie." : "Načítavanie..."}
         </p>
       )}
     </>

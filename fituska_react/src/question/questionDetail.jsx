@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Cookies from "universal-cookie";
 
 import AnswerEntry from "../answer/answerEntry";
 import AddAnswerEntry from "../answer/addAnswerEntry";
@@ -17,6 +18,9 @@ const QuestionDetail = ({ loggedUser }) => {
   const [students, setStudents] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const { id } = useParams();
+
+  const cookies = new Cookies();
+    const access_token = cookies.get("access_token");
 
   useEffect(() => {
     async function fetchQuestionData() {
@@ -102,6 +106,7 @@ const QuestionDetail = ({ loggedUser }) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": "Bearer " + access_token,
       },
       body: JSON.stringify({
         description: new FormData(e.target).get("answerText"),
@@ -151,6 +156,7 @@ const QuestionDetail = ({ loggedUser }) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": "Bearer " + access_token,
       },
       body: JSON.stringify({
         correct_answers: correct_answers,
@@ -286,6 +292,7 @@ const QuestionDetail = ({ loggedUser }) => {
             <div className="card border-info">
               <div className="bg-info">
                 <h2 className="mx-1">Titulok: {question.title}</h2>
+                <h4 className="mx-1">Status: {question.is_open ? "Otvorená" : "Uzatvorená"}</h4>
                 <div className=" mx-1">
                   Od:
                   {" " + author.first_name + " " + author.last_name}

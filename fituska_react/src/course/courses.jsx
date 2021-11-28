@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Cookies from "universal-cookie";
 
 const Courses = ({ loggedUser }) => {
   const [courses, setCourses] = useState([]);
@@ -7,7 +8,9 @@ const Courses = ({ loggedUser }) => {
   const [showAddCourse, setShowAddCourse] = useState(false);
   const [newCourseText, setNewCourseText] = useState("");
   const [loaded, setLoaded] = useState(false);
-
+  const [courseAddedMsg, setCourseAddedMsg] = useState("");
+  const cookies = new Cookies();
+    const access_token = cookies.get("access_token");
   useEffect(() => {
     async function fetchCourses() {
       const requestOptions = {
@@ -39,6 +42,7 @@ const Courses = ({ loggedUser }) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": "Bearer " + access_token,
       },
       body: JSON.stringify({
         name: newCourseText,
@@ -53,7 +57,14 @@ const Courses = ({ loggedUser }) => {
       );
 
       const data = await response.json();
-      setErrors(response.status);
+      setErrors("");
+      setCourseAddedMsg("");
+      if(response.status !== 200) {
+        console.log(response)
+        setErrors(data.detail);
+      } else {
+        setCourseAddedMsg("Kurz pridaný. Počkajte na jeho schválenie.")
+      }
       setShowAddCourse(false);
     } catch (e) {
       console.log("error:" + e);
@@ -66,15 +77,13 @@ const Courses = ({ loggedUser }) => {
         <h1>Kurzy</h1>
       </div>
       {errors && (
-        <div className="text-center">
-          {" "}
-          {errors !== 200
-            ? "Kurz sa nepodarilo pridať"
-            : " Kurz pridaný. Počkajte na jeho schválenie."}
+        <div className="text-center text-danger">
+          {errors}
         </div>
       )}
       {loggedUser && !showAddCourse && (
         <div className="text-center">
+          {courseAddedMsg && <div>{courseAddedMsg}</div>}
           <button
             className="btn btn-primary my-2"
             onClick={() => setShowAddCourse(!showAddCourse)}

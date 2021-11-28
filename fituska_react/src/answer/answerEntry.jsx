@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Cookies from "universal-cookie";
 
 import ReactionEntry from "../reaction/reactionEntry";
 import AddReactionEntry from "../reaction/addReactionEntry";
@@ -22,6 +23,8 @@ const AnswerEntry = ({
   const [upvoteCount, setUpvoteCount] = useState(upvotes.length);
   const [upvotedByUser, setUpvotedByUser] = useState(false);
   const formatedDate = new Date(date).toLocaleString();
+  const cookies = new Cookies();
+  const access_token = cookies.get("access_token");
   const name = user.first_name + " " + user.last_name;
 
   const upvoteIcon = "▲";
@@ -31,6 +34,7 @@ const AnswerEntry = ({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": "Bearer " + access_token,
       },
       body: JSON.stringify({
         description: new FormData(e.target).get("reactionText"),
@@ -61,6 +65,7 @@ const AnswerEntry = ({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": "Bearer " + access_token,
       },
       body: JSON.stringify({
         answer_id: id,
