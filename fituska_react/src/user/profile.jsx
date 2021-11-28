@@ -3,6 +3,7 @@ import Cookies from "universal-cookie";
 
 import MyCourses from "../management/mycourses";
 import CourseApproval from "../management/courseapproval";
+import UserManagement from "../management/usermanagement";
 
 const Profile = ({ loggedUser }) => {
   const [user, setUser] = useState({});
@@ -47,7 +48,7 @@ const Profile = ({ loggedUser }) => {
     <>
       {loaded && loggedUser ? (
         <>
-          <div className="col-md-5 my-1 mx-auto p-1">
+          <div className="col-md-2 my-1 mx-auto p-1">
             <h2 className="mx-1">Profil</h2>
             <div className="card d-flex flex-row">
               <div className="mx-2">
@@ -62,20 +63,23 @@ const Profile = ({ loggedUser }) => {
           <div className="col-md-5 my-1 mx-auto p-1">
             <h2 className="mx-1">Moje kurzy</h2>
             <div className="card">
-              <MyCourses loggedUser={loggedUser} />
+              <MyCourses loggedUser={loggedUser}/>
             </div>
           </div>
           {(user.management_level === 0 || user.management_level === 1) && (
             <div className="col-md-5 my-1 mx-auto p-1">
               <h2 className="mx-1">Schválenie kurzov</h2>
               <div className="card">
-                <CourseApproval loggedUser={loggedUser} />
+                <CourseApproval/>
               </div>
             </div>
           )}
           {user.management_level === 0 && (
-            <div className="col-md-5 my-1 mx-auto p-1">
+            <div className="col-md-8 my-1 mx-auto p-1">
               <h2 className="mx-1">Správa užívateľov</h2>
+              <div className="card">
+                <UserManagement />
+              </div>
             </div>
           )}
         </>
