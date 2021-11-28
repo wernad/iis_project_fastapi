@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
+import Cookies from "universal-cookie";
 
 const TopTotal = () => {
   const [topUsers, setTopUsers] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const cookies = new Cookies();
+  const access_token = cookies.get("access_token");
 
   useEffect(() => {
     async function getTopUsers() {
@@ -10,6 +13,7 @@ const TopTotal = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": "Bearer " + access_token,
         },
       };
 
