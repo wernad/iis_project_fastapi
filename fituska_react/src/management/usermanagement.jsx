@@ -52,23 +52,23 @@ const MyTextInput = ({ label, ...props }) => {
   };
   
   const validationSchemaAdd = Yup.object({
-    firstName: Yup.string().required("Required"),
-    lastName: Yup.string().required("Required"),
-    email: Yup.string().email("Invalid email address").required("Required"),
+    firstName: Yup.string().required("Povinné"),
+    lastName: Yup.string().required("Povinné"),
+    email: Yup.string().email("Email nemá správny formát.").required("Povinné"),
     password: Yup.string()
       .min(6, "Must be at least 6 characters long")
-      .required("Required"),
-    role: Yup.number().required("Required"),
+      .required("Povinné"),
+    role: Yup.number().required("Povinné"),
     isActive: Yup.boolean()
   });
 
   const validationSchemaUpdate = Yup.object({
-    firstName: Yup.string().required("Required"),
-    lastName: Yup.string().required("Required"),
-    email: Yup.string().email("Invalid email address").required("Required"),
+    firstName: Yup.string().required("Povinné"),
+    lastName: Yup.string().required("Povinné"),
+    email: Yup.string().email("Email nemá správny formát.").required("Povinné"),
     password: Yup.string()
-      .min(6, "Must be at least 6 characters long"),
-    role: Yup.number().required("Required"),
+      .min(6, "Heslo musí byť dlhé aspoň 6 znakov."),
+    role: Yup.number().required("Povinné"),
     isActive: Yup.boolean()
   });
 

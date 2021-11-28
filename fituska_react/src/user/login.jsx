@@ -24,8 +24,8 @@ const MyTextInput = ({ label, ...props }) => {
 };
 
 const ValidationSchema = Yup.object({
-  email: Yup.string().email("Invalid email address").required("Required"),
-  password: Yup.string().required("Required"),
+  email: Yup.string().email("Email nemá správny formát.").required("Povinné"),
+  password: Yup.string().required("Povinné"),
 });
 
 const Login = ({ loggedUser }) => {

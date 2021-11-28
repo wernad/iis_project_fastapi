@@ -289,6 +289,7 @@ const QuestionDetail = ({ loggedUser }) => {
                 </form>
               </>
             )}
+            <div><a href={"../course/" + question.course_id}>{"<"} Späť na kurz</a></div>
             <div className="card border-info">
               <div className="bg-info">
                 <h2 className="mx-1">Titulok: {question.title}</h2>

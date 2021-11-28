@@ -49,7 +49,7 @@ const CourseApproval = () => {
           user_id: user_id
         }),
       };
-      console.log(requestOptions.body)
+      
       try {
         const response = await fetch(
           "http://localhost:8000/approvecourse",

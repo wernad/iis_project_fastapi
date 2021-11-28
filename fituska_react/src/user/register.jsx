@@ -24,12 +24,12 @@ const MyTextInput = ({ label, ...props }) => {
 };
 
 const validationSchema = Yup.object({
-  firstName: Yup.string().required("Required"),
-  lastName: Yup.string().required("Required"),
-  email: Yup.string().email("Invalid email address").required("Required"),
+  firstName: Yup.string().required("Povinné"),
+  lastName: Yup.string().required("Povinné"),
+  email: Yup.string().email("Email nemá správny formát.").required("Povinné"),
   password: Yup.string()
-    .min(6, "Must be at least 6 characters long")
-    .required("Required"),
+    .min(6, "Heslo musí byť dlhé aspoň 6 znakov.")
+    .required("Povinné"),
 });
 
 const Register = ({ loggedUser }) => {

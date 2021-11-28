@@ -13,6 +13,7 @@ const CourseDetail = ({ loggedUser }) => {
   const [courseUsers, setCourseUsers] = useState([]);
   const [searchField, setSearchField] = useState("");
   const [showAddQuestion, setShowAddQuestion] = useState(false);
+  const [showApplied, setShowApplied] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const { id } = useParams();
   const cookies = new Cookies();
@@ -110,6 +111,7 @@ const CourseDetail = ({ loggedUser }) => {
       let new_courseUsers = courseUsers.slice();
       new_courseUsers.push(data);
       setCourseUsers(new_courseUsers);
+      setShowApplied(true);
     } catch (e) {
       console.log("error:" + e);
     }
@@ -197,6 +199,12 @@ const CourseDetail = ({ loggedUser }) => {
                 </button>
               </div>
             )}
+            {showApplied && (<div className="text-center">
+                  Prihlásili ste sa na kurz. Počkajte na schválenie žiadosti učiteľom.
+              </div>)}
+            {!checkIfCanAsk() && !checkIfCanApply() && (<div className="text-center">
+                  Vaša žiadosť ešte nebola schválená.
+              </div>)}
             <div className="container">
               <div className="my-1">
                 <input
