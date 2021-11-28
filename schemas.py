@@ -165,6 +165,9 @@ class CourseCreate(BaseModel):
     name: str
     user_id: int
 
+class CourseId(BaseModel):
+    id: int
+
 class Course(CourseBase):
     id: int
     categories: List[Category] = []

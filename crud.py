@@ -1,4 +1,4 @@
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, or_
 from sqlalchemy.orm import Session, descriptor_props
 from sqlalchemy.sql import schema
 from sqlalchemy.sql.elements import False_
@@ -10,6 +10,9 @@ import models, schemas
 #User
 def get_user_by_id(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
+
+def get_user_role(db: Session, user_id: int):
+    return db.query(models.User).filter(models.User.id == user_id).with_entities(models.User.management_level).first()
 
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
@@ -64,6 +67,9 @@ def get_category_by_id(db: Session, category_id: int):
 def get_categories_by_course(db: Session, course_id: int):
     return db.query(models.Category).filter(models.Category.course_id == course_id).all()
 
+def get_category_by_name_course(db: Session, category_name, course_id):
+    return db.query(models.Category).filter(func.lower(models.Category.name) == func.lower(category_name)).filter(models.Category.course_id == course_id).first()
+
 def get_categories(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Category).offset(skip).limit(limit).all()
 
@@ -108,7 +114,8 @@ def get_unapproved_courses(db: Session):
         models.Course, models.User, models.UserCourse
         ).filter(models.Course.is_approved == False
         ).filter(models.Course.id == models.UserCourse.course_id
-        ).filter(models.UserCourse.user_id == models.User.id).all()
+        ).filter(models.UserCourse.user_id == models.User.id
+        ).with_entities(models.User.first_name, models.User.last_name, models.UserCourse.user_id, models.Course.name, models.UserCourse.course_id).all()
 
 def create_course(db: Session, course: schemas.CourseCreate):
     new_course = models.Course(
@@ -124,6 +131,11 @@ def approve_course(db: Session, course: schemas.CourseBase):
     course.is_approved = True
     db.flush()
     return course
+
+def delete_course(db: Session, course_id: int):
+    db.query(models.Course).filter(models.Course.id == course_id).delete()
+    db.commit()
+    return {"message": "Course rejected."}
 
 #Question
 def get_question_by_id(db: Session, question_id: int):
@@ -248,9 +260,6 @@ def get_usercourse_by_user(db: Session, user_id: int):
 def get_usercourse_by_course(db: Session, course_id: int):
     return db.query(models.UserCourse).filter(models.UserCourse.course_id == course_id).all()
 
-def get_usercourse_by_course_single_user(db: Session, course_id: int):
-    return db.query(models.UserCourse).filter(models.UserCourse.course_id == course_id).first()
-
 def get_usercourse_by_course_user(db: Session, user_id: int, course_id: int):
     return db.query(models.UserCourse).filter(models.UserCourse.user_id == user_id).filter(models.UserCourse.course_id == course_id).first()
 
@@ -260,12 +269,32 @@ def get_usercourse_by_course_not_approved_only(db: Session, course_id: int):
 def get_upvotes(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.UserCourse).offset(skip).limit(limit).all()
 
+def get_usercourses_as_teacher(db: Session, user_id: int):
+    return db.query(models.UserCourse
+    ).filter(models.UserCourse.user_id == user_id
+    ).filter(models.UserCourse.is_teacher == True
+    ).filter(models.UserCourse.is_approved == True).all()
+
+def get_unapproved_users(db: Session, courses_ids):
+    return db.query(models.UserCourse, models.Course, models.User
+    ).filter(or_(models.UserCourse.course_id.in_(courses_ids))
+    ).filter(models.UserCourse.is_approved == False
+    ).filter(models.UserCourse.course_id == models.Course.id
+    ).filter(models.Course.is_approved == True
+    ).filter(models.UserCourse.user_id == models.User.id
+    ).with_entities(models.User.first_name, models.User.last_name, models.Course.name, models.UserCourse.user_id, models.UserCourse.course_id).all()
+
 def approve_usercourse(db: Session, usercourse: schemas.UserCourseDetail):
     usercourse.is_approved = True
     db.commit()
     db.refresh(usercourse)
 
     return usercourse
+
+def delete_usercourse(db: Session, user_id: int, course_id: int):
+    db.query(models.UserCourse).filter(models.UserCourse.user_id == user_id).filter(models.UserCourse.course_id == course_id).delete()
+    db.commit()
+    return {"message": "User rejected."}
 
 def create_usercourse(db: Session, form_data: schemas.UserCourseCreate, is_teacher=False):
     new_userCourse = models.UserCourse(

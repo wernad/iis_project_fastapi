@@ -76,18 +76,15 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
 
 #Checks if user token is still valid, returns id of user.
 @app.post("/checkauth", response_model=schemas.TokenOwner)
-async def check_if_logged_in(access_token: Optional[str] = Cookie(default=None)):
-    if not access_token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Autorizačný token neexistuje")
-    user_id = auth.decode_token(access_token)
-    return {"user_id": user_id}
+async def check_if_logged_in(user: int = Depends(auth.auth_request)):
+    return user
 
 @app.post("/addquestion")
-async def create_question(form_data: schemas.QuestionCreate, db: Session = Depends(get_db)):
+async def create_question(form_data: schemas.QuestionCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
     return crud.create_question(db, form_data)
 
 @app.post("/addanswer")
-async def create_answer(form_data: schemas.AnswerCreate, db: Session = Depends(get_db)):
+async def create_answer(form_data: schemas.AnswerCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
     answer = crud.get_answer_by_question_and_user(db, form_data.question_id, form_data.user_id)
     if answer:
         raise HTTPException(
@@ -98,19 +95,25 @@ async def create_answer(form_data: schemas.AnswerCreate, db: Session = Depends(g
     return crud.create_answer(db, form_data)
 
 @app.post("/addreaction")
-async def create_reaction(form_data: schemas.ReactionCreate, db: Session = Depends(get_db)):
+async def create_reaction(form_data: schemas.ReactionCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
     return crud.create_reaction(db, form_data)
 
 @app.post("/addupvote")
-async def create_upvote(form_data: schemas.UpvoteCreate, db: Session = Depends(get_db)):
+async def create_upvote(form_data: schemas.UpvoteCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
     return crud.create_upvote(db, form_data)
 
-@app.post("/addcategory")
-async def create_category(form_data: schemas.CategoryCreate, db: Session = Depends(get_db)):
+@app.post("/addcategory", status_code=201)
+async def create_category(form_data: schemas.CategoryCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+    category = crud.get_category_by_name_course(db, form_data.name, form_data.course_id)
+    if category:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Kategória s týmto názvom už existuje.",
+        )
     return crud.create_category(db, form_data)
 
 @app.post("/addcourse")
-async def create_course(form_data: schemas.CourseCreate, db: Session = Depends(get_db)):
+async def create_course(form_data: schemas.CourseCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
     course = crud.get_course_by_name(db, form_data.name)
     if course:
         raise HTTPException(
@@ -124,11 +127,30 @@ async def create_course(form_data: schemas.CourseCreate, db: Session = Depends(g
     return userCourse
 
 @app.post("/coursesignup")
-async def apply_to_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db)):
+async def apply_to_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
     return crud.create_usercourse(db, form_data)    
 
+@app.delete("/rejectusercourse")
+async def reject_usercourse(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+    return crud.delete_usercourse(db, form_data.user_id, form_data.course_id)
+
+@app.delete("/rejectcourse")
+async def reject_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+    role = crud.get_user_role(db, user["id"])
+    if role == 2:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Pre túto akciu nemáte dostatočné oprávnenie.",
+        )
+    if not crud.delete_usercourse(db, form_data.user_id, form_data.course_id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Kurz sa nepodarilo zamietnuť. Skúste to prosím znova.",
+        )
+    return crud.delete_course(db, form_data.course_id)
+
 @app.put("/closequestion")
-async def close_question(form_data: schemas.QuestionClose, db: Session = Depends(get_db)):
+async def close_question(form_data: schemas.QuestionClose, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
     correct_answers_ids = form_data.correct_answers
     upvoted_answers_ids = form_data.upvoted_answers
     final_answer = form_data.final_answer
@@ -173,20 +195,34 @@ async def close_question(form_data: schemas.QuestionClose, db: Session = Depends
     return closed_question
 
 @app.put("/updatecategory")
-async def update_category(form_data: schemas.CategoryUpdate, db: Session = Depends(get_db)):
+async def update_category(form_data: schemas.CategoryUpdate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
     category = crud.get_category_by_id(db, form_data.id)
 
     if not category:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Kategória neexistuje",
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Kategória neexistuje.",
+        )
+
+    duplicate_category = crud.get_category_by_name_course(db, form_data.name, category.course_id)
+    if duplicate_category:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Kategória s týmto názvom už existuje.",
         )
     category = crud.update_category(db, category, form_data.name)
     return category
 
 @app.put("/approvecourse")
-async def approve_course(course_id: int, db: Session = Depends(get_db)):
-    course = crud.get_course_by_id(db, course_id)
+async def approve_course(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+    role = crud.get_user_role(db, user["id"])
+    if role == 2:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Pre túto akciu nemáte dostatočné oprávnenie.",
+        )
+
+    course = crud.get_course_by_id(db, form_data.course_id)
     if not course:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -195,7 +231,7 @@ async def approve_course(course_id: int, db: Session = Depends(get_db)):
     
     course = crud.approve_course(db, course)
 
-    usercourse = crud.get_usercourse_by_course_single_user(db, course_id)
+    usercourse = crud.get_usercourse_by_course_user(db, form_data.user_id, form_data.course_id)
     if not usercourse:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -206,14 +242,14 @@ async def approve_course(course_id: int, db: Session = Depends(get_db)):
     db.commit()
     return course
 
-@app.put("/updateusercourse")
-async def approve_usercourse(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db)):
+@app.put("/approveusercourse")
+async def approve_usercourse(form_data: schemas.UserCourseCreate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
     usercourse = crud.get_usercourse_by_course_user(db, form_data.user_id, form_data.course_id)
     usercourse = crud.approve_usercourse(db, usercourse)
     return usercourse
 
 @app.put("/updateuser")
-async def update_user(form_data: schemas.UserUpdate, db: Session = Depends(get_db)):    
+async def update_user(form_data: schemas.UserUpdate, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):    
     if form_data.password:
         form_data.password = auth.get_password_hash(form_data.password)
 
@@ -227,10 +263,21 @@ async def get_courses_with_upvotes_only(db: Session = Depends(get_db)):
     return courses
 
 @app.get("/unapprovedcourses")
-async def get_unapproved_courses(db: Session = Depends(get_db)):
+async def get_unapproved_courses(db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
     courses = crud.get_unapproved_courses(db)
 
     return courses
+
+@app.get("/unapprovedusers")
+async def get_unapproved_courses(db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
+    usercourses = crud.get_usercourses_as_teacher(db, user["id"])
+
+    courses_ids = [usercourse.course_id for usercourse in usercourses]
+
+    unapproved_courses = crud.get_unapproved_users(db, courses_ids)
+
+    return unapproved_courses
+
 
 @app.get("/topusers")
 async def get_top_users(db: Session = Depends(get_db)):
@@ -245,7 +292,7 @@ async def get_top_users_in_course(course_id, db: Session = Depends(get_db)):
     return top_users
 
 @app.get("/profile/{user_id}", response_model=schemas.UserWithManagement)
-async def get_profile(user_id, db: Session = Depends(get_db)):
+async def get_profile(user_id, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
     user = crud.get_user_by_id(db, user_id)
 
     return user
@@ -267,7 +314,7 @@ async def get_course_detail(course_id, db: Session = Depends(get_db)):
     return course
 
 @app.get("/mycourses/{user_id}", response_model=schemas.UserMyCourses)
-async def get_my_courses(user_id, db: Session = Depends(get_db)):
+async def get_my_courses(user_id, db: Session = Depends(get_db), user: int = Depends(auth.auth_request)):
     my_courses = crud.get_user_by_id(db, user_id)
 
     return my_courses
