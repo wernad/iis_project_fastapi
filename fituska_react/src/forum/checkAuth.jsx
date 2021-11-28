@@ -25,6 +25,7 @@ const CheckAuth = () => {
         method: "POST",
         headers: {
           "credentials": "include",
+          "Authorization": "Bearer " + access_token,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -39,7 +40,7 @@ const CheckAuth = () => {
         );
 
         const data = await response.json();
-        console.log(data)
+        
         setLoggedUser(data.id);
         setLoaded(true);
       } catch (e) {
