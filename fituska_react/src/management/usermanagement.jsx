@@ -110,8 +110,8 @@ const UserManagement = () => {
 
     return (
     <>{loaded && <div>
-      {errors && <div className="text-danger">{errors}</div>}
-      {onSuccess && <div className="text-success">{onSuccess}</div>}
+      {errors && <div className="h4 text-danger">{errors}</div>}
+      {onSuccess && <div className="h4 text-success">{onSuccess}</div>}
         <table className="table">
             <tbody>
                 <tr>
@@ -139,7 +139,8 @@ const UserManagement = () => {
             validationSchema={validationSchemaUpdate}
             onSubmit={async (values, isSubmitting) => {
               isSubmitting = true;
-
+              setOnSuccess("");
+              setErrors("");
               const requestOptions = {
                 method: "PUT",
                 headers: {
@@ -164,6 +165,7 @@ const UserManagement = () => {
                 );
                   
                 const data = await response.json();
+                
                 if(response.status !== 200) {
                   setErrors(data.detail)
                   console.log(errors)
@@ -236,9 +238,10 @@ const UserManagement = () => {
               isActive: true
             }}
             validationSchema={validationSchemaAdd}
-            onSubmit={async (values, isSubmitting) => {
+            onSubmit={async (values, actions, isSubmitting) => {
               isSubmitting = true;
-
+              setOnSuccess("");
+              setErrors("");
               const requestOptions = {
                 method: "POST",
                 headers: {
@@ -262,11 +265,13 @@ const UserManagement = () => {
                 );
                   
                 const data = await response.json();
+                
                 if(response.status !== 200) {
                   setErrors(data.detail)
                   console.log(errors)
                 } else {
                   setOnSuccess("Užívateľ pridaný.")
+                  actions.resetForm();
                 }
                 setRerender(!rerender);
               } catch (e) {

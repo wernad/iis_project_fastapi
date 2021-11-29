@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 
-const UserApproval = () => {
+const UserApproval = ({teacherCourses}) => {
     const [unapprovedUsers, setUnapprovedUsers] = useState([]);
     const [errors, setErrors] = useState();
     const [loaded, setLoaded] = useState(false);
