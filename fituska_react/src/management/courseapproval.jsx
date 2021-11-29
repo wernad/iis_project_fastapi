@@ -35,7 +35,7 @@ const CourseApproval = () => {
     }
 
     getUnapprovedCourses();
-  }, []);
+  }, [rerender]);
 
   const approveCourse = async (user_id, course_id) => {
     const requestOptions = {
@@ -61,6 +61,7 @@ const CourseApproval = () => {
           setErrors(data.detail)
           console.log(errors)
         }
+        
         setRerender(!rerender);
       } catch (e) {
         console.log("error:" + e);

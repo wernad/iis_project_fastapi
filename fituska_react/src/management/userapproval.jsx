@@ -35,7 +35,7 @@ const UserApproval = () => {
           }
         }
         getMyCourses();
-      }, []);  
+      }, [rerender]);  
     
     const approveUser = async (user_id, course_id) => {
         const requestOptions = {
