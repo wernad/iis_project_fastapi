@@ -283,11 +283,13 @@ async def update_user(form_data: schemas.UserUpdate, db: Session = Depends(get_d
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Email je zabraný.",
             )
-
+    
     if form_data.password:
         form_data.password = auth.get_password_hash(form_data.password)
-    form_data.dict(exclude_unset=True)
-
+        form_data = form_data.dict()
+    else:
+        form_data = form_data.dict(exclude={'password'})
+    
     new_user = crud.update_user(db, form_data)
     return new_user
 

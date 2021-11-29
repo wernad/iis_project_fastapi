@@ -152,7 +152,7 @@ const UserManagement = () => {
                     first_name: values.firstName,
                     last_name: values.lastName,
                     email: values.email,
-                    password: values.password,
+                    password: values.password.length > 0 ? values.password : null ,
                     is_active: values.isActive,
                     management_level: values.role
                 }),
@@ -167,8 +167,8 @@ const UserManagement = () => {
                 const data = await response.json();
                 
                 if(response.status !== 200) {
-                  setErrors(data.detail)
-                  console.log(errors)
+                  //setErrors(data.detail)
+                  console.log(data)
                 } else {
                   setOnSuccess("Dáta užívateľa aktualizované.")
                 }

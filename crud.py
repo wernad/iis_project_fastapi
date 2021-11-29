@@ -79,10 +79,10 @@ def create_user(db: Session, user: schemas.UserCreateAllData):
     db.refresh(new_user)
     return new_user
 
-def update_user(db: Session, new_data: schemas.UserUpdate):
-    db.query(models.User).filter(models.User.id == new_data.id).update(dict(new_data))
+def update_user(db: Session, new_data):
+    db.query(models.User).filter(models.User.id == new_data["id"]).update(new_data)
     db.commit()
-    return db.query(models.User).filter(models.User.id == new_data.id).first()
+    return db.query(models.User).filter(models.User.id == new_data["id"]).first()
 
 #Category
 def get_category_by_id(db: Session, category_id: int):
