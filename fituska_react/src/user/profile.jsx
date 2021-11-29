@@ -5,7 +5,7 @@ import MyCourses from "../management/mycourses";
 import CourseApproval from "../management/courseapproval";
 import UserManagement from "../management/usermanagement";
 
-const Profile = ({ loggedUser }) => {
+const Profile = ({ loggedUser, hostname }) => {
   const [user, setUser] = useState({});
   const [loaded, setLoaded] = useState(false);
 
@@ -24,7 +24,7 @@ const Profile = ({ loggedUser }) => {
 
       try {
         const response = await fetch(
-          "http://localhost:8000/profile/" + loggedUser,
+          hostname + "profile/" + loggedUser,
           requestOptions
         );
 
@@ -63,14 +63,14 @@ const Profile = ({ loggedUser }) => {
           <div className="col-md-5 my-1 mx-auto p-1">
             <h2 className="mx-1">Moje kurzy</h2>
             <div className="card">
-              <MyCourses loggedUser={loggedUser}/>
+              <MyCourses loggedUser={loggedUser} hostname={hostname}/>
             </div>
           </div>
           {(user.management_level === 0 || user.management_level === 1) && (
             <div className="col-md-5 my-1 mx-auto p-1">
               <h2 className="mx-1">Schválenie kurzov</h2>
               <div className="card">
-                <CourseApproval/>
+                <CourseApproval hostname={hostname}/>
               </div>
             </div>
           )}
@@ -78,7 +78,7 @@ const Profile = ({ loggedUser }) => {
             <div className="col-md-8 my-1 mx-auto p-1">
               <h2 className="mx-1">Správa užívateľov</h2>
               <div className="card">
-                <UserManagement />
+                <UserManagement hostname={hostname}/>
               </div>
             </div>
           )}

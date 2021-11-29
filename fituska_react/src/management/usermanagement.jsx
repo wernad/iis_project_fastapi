@@ -72,7 +72,7 @@ const MyTextInput = ({ label, ...props }) => {
     isActive: Yup.boolean()
   });
 
-const UserManagement = () => {
+const UserManagement = ({hostname}) => {
     const [users, setUsers] = useState([]);
     const [errors, setErrors] = useState();
     const [loaded, setLoaded] = useState(false);
@@ -93,7 +93,7 @@ const UserManagement = () => {
     
           try {
             const response = await fetch(
-              "http://localhost:8000/users",
+              hostname + "users",
               requestOptions
             );
                 
@@ -160,7 +160,7 @@ const UserManagement = () => {
               
               try {
                 const response = await fetch(
-                  "http://localhost:8000/updateuser",
+                  hostname + "updateuser",
                   requestOptions
                 );
                   
@@ -260,7 +260,7 @@ const UserManagement = () => {
               
               try {
                 const response = await fetch(
-                  "http://localhost:8000/adduser",
+                  hostname + "adduser",
                   requestOptions
                 );
                   

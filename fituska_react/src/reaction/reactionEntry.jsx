@@ -1,6 +1,6 @@
 import React from "react";
 
-const ReactionEntry = ({ date, description, user }) => {
+const ReactionEntry = ({ date, description, user,hostname }) => {
   const formatedDate = new Date(date).toLocaleString();
   const name = user.first_name + " " + user.last_name;
   return (

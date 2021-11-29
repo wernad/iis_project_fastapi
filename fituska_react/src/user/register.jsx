@@ -32,7 +32,7 @@ const validationSchema = Yup.object({
     .required("Povinné"),
 });
 
-const Register = ({ loggedUser }) => {
+const Register = ({ loggedUser, hostname }) => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState("");
   if (loggedUser) {
@@ -72,7 +72,7 @@ const Register = ({ loggedUser }) => {
               };
 
               const response = await fetch(
-                "http://localhost:8000/register",
+                hostname + "register",
                 requestOptions
               );
 

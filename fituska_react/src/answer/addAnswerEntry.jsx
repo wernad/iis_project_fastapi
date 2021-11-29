@@ -8,6 +8,7 @@ const AddAnswerEntry = ({
   question_open,
   answers_authors,
   addAnswer,
+  hostname
 }) => {
   const [answerText, setAnswerText] = useState("");
   function updateAnswerText(e) {

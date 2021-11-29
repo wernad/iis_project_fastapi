@@ -5,7 +5,7 @@ import Cookies from "universal-cookie";
 import CategoryManagement from "../management/categorymanagement";
 import UserApproval from "./userapproval";
 
-const MyCourses = ({ loggedUser }) => {
+const MyCourses = ({ loggedUser, hostname }) => {
   const [studentCourses, setStudentCourses] = useState([]);
   const [teacherCourses, setTeacherCourses] = useState([]);
   const [showComponent, setShowComponent] = useState(0);
@@ -26,7 +26,7 @@ const MyCourses = ({ loggedUser }) => {
 
       try {
         const response = await fetch(
-          "http://localhost:8000/mycourses/" + loggedUser,
+          hostname + "mycourses/" + loggedUser,
           requestOptions
         );
 
@@ -115,12 +115,12 @@ const MyCourses = ({ loggedUser }) => {
               <div>
               {showComponent===1 &&
                 <div className="container">
-                  <CategoryManagement teacherCourses={teacherCourses} />
+                  <CategoryManagement teacherCourses={teacherCourses} hostname={hostname}/>
                 </div>
               }
               {showComponent===2 && 
               <div className="container">
-                <UserApproval/>
+                <UserApproval hostname={hostname}/>
                 </div>}
               </div>
             </div>

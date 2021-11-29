@@ -19,6 +19,7 @@ const AnswerEntry = ({
   totalUpvotes,
   question_open,
   showCloseQuestion,
+  hostname
 }) => {
   const [upvoteCount, setUpvoteCount] = useState(upvotes.length);
   const [upvotedByUser, setUpvotedByUser] = useState(false);
@@ -46,7 +47,7 @@ const AnswerEntry = ({
 
     try {
       const response = await fetch(
-        "http://localhost:8000/addreaction",
+        hostname + "addreaction",
         requestOptions
       );
 
@@ -75,7 +76,7 @@ const AnswerEntry = ({
 
     try {
       const response = await fetch(
-        "http://localhost:8000/addupvote",
+        hostname + "addupvote",
         requestOptions
       );
 
@@ -219,6 +220,7 @@ const AnswerEntry = ({
                   description={reaction.description}
                   date={reaction.date}
                   user={reaction.user}
+                  hostname={hostname}
                 />
               </div>
             );
@@ -230,6 +232,7 @@ const AnswerEntry = ({
           students={students}
           question_open={question_open}
           addReaction={addReaction}
+          hostname={hostname}
         />
       </div>
     </>

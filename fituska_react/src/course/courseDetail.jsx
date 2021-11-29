@@ -5,7 +5,7 @@ import Cookies from "universal-cookie";
 
 import AddQuestion from "../question/addQuestion";
 
-const CourseDetail = ({ loggedUser }) => {
+const CourseDetail = ({ loggedUser, hostname}) => {
   const [statusCode, setStatusCode] = useState();
   const [name, setName] = useState();
   const [questions, setQuestions] = useState([]);
@@ -29,7 +29,7 @@ const CourseDetail = ({ loggedUser }) => {
 
       try {
         const response = await fetch(
-          "http://localhost:8000/course/" + id,
+          hostname + "course/" + id,
           requestOptions
         );
 
@@ -73,7 +73,7 @@ const CourseDetail = ({ loggedUser }) => {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/addquestion",
+        hostname + "addquestion",
         requestOptions
       );
 
@@ -102,7 +102,7 @@ const CourseDetail = ({ loggedUser }) => {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/coursesignup",
+        hostname + "coursesignup",
         requestOptions
       );
 
@@ -179,6 +179,7 @@ const CourseDetail = ({ loggedUser }) => {
             showAddQuestion={showAddQuestion}
             addQuestion={addQuestion}
             categories={categories}
+            hostname={hostname}
           />
 
           <div className={`${showAddQuestion && "d-none"}`}>

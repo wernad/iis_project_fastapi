@@ -6,6 +6,7 @@ const AddReactionEntry = ({
   students,
   question_open,
   addReaction,
+  hostname
 }) => {
   const [reactionText, setReactionText] = useState("");
   function updateReactionText(e) {

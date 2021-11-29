@@ -12,6 +12,7 @@ import Profile from "../user/profile";
 import Navigation from "./navbar";
 
 const CheckAuth = () => {
+  const hostname = 'http://104.238.158.167:443/'
   const [loggedUser, setLoggedUser] = useState(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -35,7 +36,7 @@ const CheckAuth = () => {
 
       try {
         const response = await fetch(
-          "http://localhost:8000/checkauth",
+          hostname + "checkauth",
           requestOptions
         );
 
@@ -60,28 +61,28 @@ const CheckAuth = () => {
       {loaded ? (
         <BrowserRouter>
           <div>
-            <Navigation loggedUser={loggedUser} />
+            <Navigation loggedUser={loggedUser} hostname={hostname}/>
             <Routes>
               <Route
                 path="profile"
-                element={<Profile loggedUser={loggedUser} />}
+                element={<Profile loggedUser={loggedUser} hostname={hostname}/>}
               />
-              <Route path="login" element={<Login loggedUser={loggedUser} />} />
+              <Route path="login" element={<Login loggedUser={loggedUser} hostname={hostname}/>} />
               <Route
                 path="register"
-                element={<Register loggedUser={loggedUser} />}
+                element={<Register loggedUser={loggedUser} hostname={hostname}/>}
               />
-              <Route path="/" element={<Courses loggedUser={loggedUser} />} />
+              <Route path="/" element={<Courses loggedUser={loggedUser} hostname={hostname}/>} />
               <Route
                 exact
                 path="course/:id"
-                element={<CourseDetail loggedUser={loggedUser} />}
+                element={<CourseDetail loggedUser={loggedUser} hostname={hostname}/>}
               />
               <Route
                 path="questions/:id"
-                element={<QuestionDetail loggedUser={loggedUser} />}
+                element={<QuestionDetail loggedUser={loggedUser} hostname={hostname}/>}
               />
-              <Route path="top" element={<Top loggedUser={loggedUser} />} />
+              <Route path="top" element={<Top loggedUser={loggedUser} hostname={hostname}/>} />
             </Routes>
           </div>
         </BrowserRouter>

@@ -5,6 +5,7 @@ const AddQuestion = ({
   showAddQuestion,
   addQuestion,
   categories,
+  hostname
 }) => {
   const [questionText, setQuestionText] = useState("");
   const [questionTitle, setQuestionTitle] = useState("");

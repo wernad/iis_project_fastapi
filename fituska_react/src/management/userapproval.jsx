@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 
-const UserApproval = ({teacherCourses}) => {
+const UserApproval = ({hostname}) => {
     const [unapprovedUsers, setUnapprovedUsers] = useState([]);
     const [errors, setErrors] = useState();
     const [loaded, setLoaded] = useState(false);
@@ -21,7 +21,7 @@ const UserApproval = ({teacherCourses}) => {
     
           try {
             const response = await fetch(
-              "http://localhost:8000/unapprovedusers",
+              hostname + "unapprovedusers",
               requestOptions
             );
                 
@@ -52,7 +52,7 @@ const UserApproval = ({teacherCourses}) => {
           console.log(requestOptions.body)
           try {
             const response = await fetch(
-              "http://localhost:8000/approveusercourse",
+              hostname + "approveusercourse",
               requestOptions
             );
               
@@ -82,7 +82,7 @@ const UserApproval = ({teacherCourses}) => {
       
         try {
           const response = await fetch(
-            "http://localhost:8000/rejectusercourse",
+            hostname + "rejectusercourse",
             requestOptions
           );
           const data = await response.json();

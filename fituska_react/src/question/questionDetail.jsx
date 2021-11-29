@@ -5,7 +5,7 @@ import Cookies from "universal-cookie";
 import AnswerEntry from "../answer/answerEntry";
 import AddAnswerEntry from "../answer/addAnswerEntry";
 
-const QuestionDetail = ({ loggedUser }) => {
+const QuestionDetail = ({ loggedUser, hostname }) => {
   const [showCloseQuestion, setShowCloseQuestion] = useState(false);
   const [answersCheckboxes, setAnswersCheckboxes] = useState({});
   const [finalAnswerText, setFinalAnswerText] = useState("");
@@ -33,7 +33,7 @@ const QuestionDetail = ({ loggedUser }) => {
 
       try {
         const response = await fetch(
-          "http://localhost:8000/question/" + id,
+          hostname + "question/" + id,
           requestOptions
         );
 
@@ -118,7 +118,7 @@ const QuestionDetail = ({ loggedUser }) => {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/addanswer",
+        hostname + "addanswer",
         requestOptions
       );
 
@@ -167,7 +167,7 @@ const QuestionDetail = ({ loggedUser }) => {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/closequestion",
+        hostname + "closequestion",
         requestOptions
       );
 
@@ -363,6 +363,7 @@ const QuestionDetail = ({ loggedUser }) => {
                         question_open={question.is_open}
                         loggedUser={loggedUser}
                         showCloseQuestion={showCloseQuestion}
+                        hostname={hostname}
                       />
                     </div>
                   );
@@ -379,6 +380,7 @@ const QuestionDetail = ({ loggedUser }) => {
                   return answer.user_id;
                 })}
                 addAnswer={addAnswer}
+                hostname={hostname}
               />
             </div>
           </div>

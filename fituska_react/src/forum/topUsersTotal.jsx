@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 
-const TopTotal = () => {
+const TopTotal = ({hostname}) => {
   const [topUsers, setTopUsers] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const cookies = new Cookies();
@@ -19,7 +19,7 @@ const TopTotal = () => {
 
       try {
         const response = await fetch(
-          "http://localhost:8000/topusers/",
+          hostname + "topusers/",
           requestOptions
         );
 

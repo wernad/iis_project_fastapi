@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import TopTotal from "./topUsersTotal";
 import TopCourseTotal from "./topUsersCourse";
 
-const Top = ({ loggedUser }) => {
+const Top = ({ loggedUser, hostname }) => {
   const [courses, setCourses] = useState([]);
   const [showTotal, setShowTotal] = useState(true);
   const [courseToShow, setCourseToShow] = useState(null);
@@ -20,7 +20,7 @@ const Top = ({ loggedUser }) => {
 
       try {
         const response = await fetch(
-          "http://localhost:8000/courseswithupvotes/",
+          hostname + "courseswithupvotes/",
           requestOptions
         );
 
@@ -75,7 +75,7 @@ const Top = ({ loggedUser }) => {
           </div>
 
           <div className="container">
-            <div>{showTotal && <TopTotal />}</div>
+            <div>{showTotal && <TopTotal hostname={hostname}/>}</div>
             <div>
               {courses &&
                 !showTotal &&
@@ -88,6 +88,7 @@ const Top = ({ loggedUser }) => {
                             key={key}
                             course_id={course.id}
                             course_name={course.name}
+                            hostname={hostname}
                           />
                         </div>
                       )}

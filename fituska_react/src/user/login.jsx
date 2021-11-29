@@ -28,7 +28,7 @@ const ValidationSchema = Yup.object({
   password: Yup.string().required("Povinné"),
 });
 
-const Login = ({ loggedUser }) => {
+const Login = ({ loggedUser, hostname }) => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState("");
 
@@ -68,7 +68,7 @@ const Login = ({ loggedUser }) => {
 
               try {
                 const response = await fetch(
-                  "http://localhost:8000/token",
+                  hostname + "token",
                   requestOptions
                 );
 

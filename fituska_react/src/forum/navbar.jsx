@@ -3,7 +3,7 @@ import { Navbar, Container, Nav } from "react-bootstrap";
 import Cookies from "universal-cookie";
 import { useIdleTimer } from "react-idle-timer";
 
-const Navigation = ({ loggedUser }) => {
+const Navigation = ({ loggedUser, hostname }) => {
   function logOut() {
     const cookies = new Cookies();
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Cookies from "universal-cookie";
 
-const CategoryManagement = ({teacherCourses}) => {
+const CategoryManagement = ({teacherCourses, hostname}) => {
     const [coursesCategories, setCoursesCategories] = useState({})
     const [showCategories, setShowCategories] = useState(null);
     const [errors, setErrors] = useState(null);
@@ -29,7 +29,7 @@ const CategoryManagement = ({teacherCourses}) => {
   
         try {
           const response = await fetch(
-            "http://localhost:8000/mycoursecategories/?" + params.join('&'),
+            hostname + "mycoursecategories/?" + params.join('&'),
             requestOptions
           );
           
@@ -83,7 +83,7 @@ const CategoryManagement = ({teacherCourses}) => {
   
       try {
         const response = await fetch(
-          "http://localhost:8000/updatecategory",
+          hostname + "updatecategory",
           requestOptions
         );
       
@@ -129,7 +129,7 @@ const addCategory = async (e) => {
 
   try {
     const response = await fetch(
-      "http://localhost:8000/addcategory",
+      hostname + "addcategory",
       requestOptions
     );
 

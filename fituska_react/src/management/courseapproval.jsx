@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 
-const CourseApproval = () => {
+const CourseApproval = ({hostname}) => {
   const [courses, setCourses] = useState([]);
   const [errors, setErrors] = useState();
     const [loaded, setLoaded] = useState(false);
@@ -21,7 +21,7 @@ const CourseApproval = () => {
 
       try {
         const response = await fetch(
-          "http://localhost:8000/unapprovedcourses",
+          hostname + "unapprovedcourses",
           requestOptions
         );
 
@@ -52,7 +52,7 @@ const CourseApproval = () => {
       
       try {
         const response = await fetch(
-          "http://localhost:8000/approvecourse",
+          hostname + "approvecourse",
           requestOptions
         );
           
@@ -83,7 +83,7 @@ const rejectCourse = async (user_id, course_id) => {
   
     try {
       const response = await fetch(
-        "http://localhost:8000/rejectcourse",
+        hostname + "rejectcourse",
         requestOptions
       );
       const data = await response.json();

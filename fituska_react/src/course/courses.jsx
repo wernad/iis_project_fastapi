@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Cookies from "universal-cookie";
 
-const Courses = ({ loggedUser }) => {
+const Courses = ({ loggedUser, hostname }) => {
   const [courses, setCourses] = useState([]);
   const [errors, setErrors] = useState();
   const [showAddCourse, setShowAddCourse] = useState(false);
@@ -22,7 +22,7 @@ const Courses = ({ loggedUser }) => {
 
       try {
         const response = await fetch(
-          "http://localhost:8000/courses",
+          hostname + "courses",
           requestOptions
         );
 
@@ -52,7 +52,7 @@ const Courses = ({ loggedUser }) => {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/addcourse",
+        hostname + "addcourse",
         requestOptions
       );
 
