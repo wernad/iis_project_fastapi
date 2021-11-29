@@ -105,10 +105,11 @@ const UserManagement = () => {
           }
         }
         getMyCourses();
-      }, []);  
+      }, [rerender]);  
 
     return (
     <>{loaded && <div>
+      {errors && <div className="text-danger">{errors}</div>}
         <table className="table">
             <tbody>
                 <tr>
@@ -153,7 +154,7 @@ const UserManagement = () => {
                     management_level: values.role
                 }),
               };
-              console.log(requestOptions.body)
+              
               try {
                 const response = await fetch(
                   "http://localhost:8000/updateuser",
@@ -258,9 +259,10 @@ const UserManagement = () => {
                   
                 const data = await response.json();
                 if(response.status !== 200) {
-                  setErrors(response.detail)
+                  setErrors(data.detail)
                   console.log(errors)
                 }
+                setRerender(!rerender);
               } catch (e) {
                 console.log("error:" + e);
               }
@@ -313,7 +315,7 @@ const UserManagement = () => {
                 </div>
               </Form>
             )}
-          </Formik>
+          </Formik>          
           <div>*Povinné údaje.</div>
           </div>}
         </>

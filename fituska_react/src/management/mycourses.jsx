@@ -115,7 +115,7 @@ const MyCourses = ({ loggedUser }) => {
               <div>
               {showComponent===1 &&
                 <div className="container">
-                  <CategoryManagement teacherCourses={teacherCourses} loggedUser={loggedUser} />
+                  <CategoryManagement teacherCourses={teacherCourses} />
                 </div>
               }
               {showComponent===2 && 
