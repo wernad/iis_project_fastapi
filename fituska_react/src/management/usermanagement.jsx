@@ -76,6 +76,7 @@ const UserManagement = () => {
     const [users, setUsers] = useState([]);
     const [errors, setErrors] = useState();
     const [loaded, setLoaded] = useState(false);
+    const [onSuccess, setOnSuccess] = useState("");
     const[rerender, setRerender] = useState(false);
     const cookies = new Cookies();
     const access_token = cookies.get("access_token");
@@ -110,6 +111,7 @@ const UserManagement = () => {
     return (
     <>{loaded && <div>
       {errors && <div className="text-danger">{errors}</div>}
+      {onSuccess && <div className="text-success">{onSuccess}</div>}
         <table className="table">
             <tbody>
                 <tr>
@@ -165,6 +167,8 @@ const UserManagement = () => {
                 if(response.status !== 200) {
                   setErrors(data.detail)
                   console.log(errors)
+                } else {
+                  setOnSuccess("Dáta užívateľa aktualizované.")
                 }
                 setRerender(!rerender);
               } catch (e) {
@@ -261,6 +265,8 @@ const UserManagement = () => {
                 if(response.status !== 200) {
                   setErrors(data.detail)
                   console.log(errors)
+                } else {
+                  setOnSuccess("Užívateľ pridaný.")
                 }
                 setRerender(!rerender);
               } catch (e) {
