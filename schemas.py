@@ -170,7 +170,6 @@ class CourseId(BaseModel):
 
 class Course(CourseBase):
     id: int
-    categories: List[Category] = []
     
     class Config:
         orm_mode = True

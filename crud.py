@@ -1,5 +1,5 @@
 from sqlalchemy import func, desc, or_
-from sqlalchemy.orm import Session, descriptor_props
+from sqlalchemy.orm import Session
 from sqlalchemy.sql import schema
 from sqlalchemy.sql.elements import False_
 from sqlalchemy.sql.expression import false
@@ -90,6 +90,9 @@ def get_category_by_id(db: Session, category_id: int):
 
 def get_categories_by_course(db: Session, course_id: int):
     return db.query(models.Category).filter(models.Category.course_id == course_id).all()
+
+def get_categories_by_courses(db: Session, courses_ids):
+    return db.query(models.Category).filter(or_(models.Category.course_id.in_(courses_ids))).all()
 
 def get_category_by_name_course(db: Session, category_name, course_id):
     return db.query(models.Category).filter(func.lower(models.Category.name) == func.lower(category_name)).filter(models.Category.course_id == course_id).first()

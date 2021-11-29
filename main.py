@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from fastapi import Depends, FastAPI, HTTPException, status, Cookie
+from fastapi import Depends, FastAPI, HTTPException, status, Cookie, Query
 from fastapi.encoders import jsonable_encoder
 import json
 from fastapi.security import OAuth2PasswordRequestForm
@@ -276,18 +276,20 @@ async def approve_usercourse(form_data: schemas.UserCourseCreate, db: Session = 
 
 @app.put("/updateuser")
 async def update_user(form_data: schemas.UserUpdate, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
-    if crud.get_user_by_email(db, form_data.email).id != form_data.id:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Email je zabraný.",
-        )
+    new_user = crud.get_user_by_email(db, form_data.email)
+    if new_user:
+        if new_user.id != form_data.id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Email je zabraný.",
+            )
 
     if form_data.password:
         form_data.password = auth.get_password_hash(form_data.password)
     form_data.dict(exclude_unset=True)
 
-    user = crud.update_user(db, form_data)
-    return user
+    new_user = crud.update_user(db, form_data)
+    return new_user
 
 @app.get("/courseswithupvotes")
 async def get_courses_with_upvotes_only(db: Session = Depends(get_db)):
@@ -347,8 +349,14 @@ async def get_course_detail(course_id, db: Session = Depends(get_db)):
     return course
 
 @app.get("/mycourses/{user_id}", response_model=schemas.UserMyCourses)
-async def get_my_courses(user_id, db: Session = Depends(get_db), user: int = Depends(check_user_is_active)):
+async def get_my_courses(user_id, db: Session = Depends(get_db)):
     return crud.get_user_by_id(db, user_id)
+
+@app.get("/mycoursecategories/", response_model=List[schemas.Category])
+async def get_my_course_categories(course_id: Optional[List[int]] = Query(None), db: Session = Depends(get_db)):
+    if course_id:
+        return crud.get_categories_by_courses(db, course_id)
+    return []
 
 @app.get("/question/{question_id}", response_model=schemas.Question)
 async def get_question_detail(question_id, db: Session = Depends(get_db)):
