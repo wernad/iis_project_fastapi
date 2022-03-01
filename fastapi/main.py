@@ -16,13 +16,13 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 origins = [
-    "http://104.238.158.167",
-    "http://104.238.158.167:3000",
-    "http://104.238.158.167:3000/course", 
-    "http://104.238.158.167:3000/question",
-    "http://104.238.158.167:3000/top",
-    "http://104.238.158.167:3000/user",
-    "http://104.238.158.167:3000/top"
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:3000/course", 
+    "http://localhost:3000/question",
+    "http://localhost:3000/top",
+    "http://localhost:3000/user",
+    "http://localhost:3000//top"
 ]
 
 app.add_middleware(
