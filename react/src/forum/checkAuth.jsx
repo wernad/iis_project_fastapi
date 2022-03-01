@@ -12,7 +12,7 @@ import Profile from "../user/profile";
 import Navigation from "./navbar";
 
 const CheckAuth = () => {
-  const hostname = 'http://104.238.158.167:443/'
+  const hostname = 'http://localhost:8000/'
   const [loggedUser, setLoggedUser] = useState(null);
   const [loaded, setLoaded] = useState(false);
 
