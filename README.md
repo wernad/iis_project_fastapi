@@ -1,4 +1,9 @@
-# Management system for school forum.
+# School team assignment.
+
+This application is was a part of assignment from my bachelor's studies for Information Systems class.
+The application is for managing a forum for teachers and students.
+Solution allows standard guests, student and teacher users and admin users.
+Forum allows creating questions, answers and voting for them, as well as choosing correct answer.
 
 ## Used technologies:
 - Python 3.8
